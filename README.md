@@ -35,7 +35,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
     - Import the ligand structures (sdf file generated before).
     - Execute Ligand Preparation tool in Maestro.
 
-3. **Pymodsim centering**: As the GPCR will be embedded in a membrane, you first need to align the protein with it.
+3. **Pymodsim centering**: As the GPCR should be embedded in a membrane, you first need to align the protein with it.
     - Export prepared protein as pdb file.
     - Follow the protocol of [PyModSim](https://github.com/GPCR-ModSim/pymodsim). For only alignment:
 
@@ -49,8 +49,8 @@ In Maestro, protein and ligand preparation typically involve several steps to en
     - Export selected poses as pdb files.
     - Export GPCR as pdb file, save as protein.pdb.
 
-6. **Prepare system for pymemdyn**: at this point you have multiple ligands (and/or diferent poses for same ligand) as pdb files with residue name 'UNK' and the protein.
-   Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen][https://github.com/Isra3l/ligpargen], and rename the files properly for pymemdyn.
+6. **Prepare system for PyMemDyn**: at this point you have multiple ligands (and/or diferent poses for same ligand) as pdb files with residue name 'UNK' and the protein.
+   Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen][https://github.com/Isra3l/ligpargen], and rename the files properly for PyMemDyn. 
    
       ```bash
       setup_pym [-C CLUSTER] [-l LIGAND]
@@ -94,7 +94,7 @@ This creates a folder for each ligand, executes ligpargen for ligand parameters 
 
 ### 2. Execute pymemdyn
 Execute submit.sh file in your cluster.
-Please check [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) documentation for instalation. The arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
+Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
 From this point onward, the protocol will vary depending on whether you intend to perform MD simulations, FEP calculations, or both. Choose the appropriate protocol based on your objectives.
 
