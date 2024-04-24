@@ -57,15 +57,28 @@ In Maestro, protein and ligand preparation typically involve several steps to en
       -h, --help
                     show help message
       -l LIGAND
-                    Ligand identifiers of ligands present within the PDB file. If multiple ligands are present, give a comma-delimited list.
+                    Ligand identifiers of ligands
+                    present within the PDB file.
+                    If multiple ligands are present,
+                    give a comma-delimited list.
+      
       -w WATERS
-                    Water identifiers of crystalized water molecules present within the PDB file.
+                    Water identifiers of crystalized
+                    water molecules present within
+                    the PDB file.
       -i IONS
-                    Ion identifiers of crystalized water molecules present within the PDB file.
-      --res         Position restraints during MD production run. Options: bw (Ballesteros-Weinstein Restrained Relaxation - default), ca (C-Alpha Restrained Relaxation)
+                    Ion identifiers of crystalized water
+                    molecules present within the PDB file.
+      
+      --res         Position restraints during MD production
+                    run. Options: bw (Ballesteros-Weinstein
+                    Restrained Relaxation - default),
+                    ca (C-Alpha Restrained Relaxation)
 
       --full_relax [True/False]
-                    Toggle for performing full MD relaxation. If set to false, the run will finish after the initial relaxation. (default = True)
+                    Toggle for performing full MD relaxation.
+                    If set to false, the run will finish after
+                    the initial relaxation. (default = True)
       ```
       
 
