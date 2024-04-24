@@ -82,9 +82,9 @@ In Maestro, protein and ligand preparation typically involve several steps to en
                     the initial relaxation. (default = True)
       ```
 
-This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for submitting to a cluster SLURM queue.
+    This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for           submitting to a cluster SLURM queue.
 
-6. **Run pymemdyn**: execute submit.sh file in 
+7. **Run pymemdyn**: execute submit.sh file in 
 
 
 
