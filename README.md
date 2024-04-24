@@ -7,7 +7,7 @@ All the scripts and the pipeline are optimized for batch processing of MD simula
 
 This pipeline outlines the workflow for working with G Protein-Coupled Receptors (GPCRs). All steps described below have been tested using Schrödinger software (Maestro) for file preparation (protprep, ligprep), and docking.
 
-### 1. Files preparation
+### 1. File preparation
 
 #### 1.1 Excel to SDF Conversion
 
