@@ -55,6 +55,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
                 [--full_relax FULL_RELAX]
                 [--res RESTRAINT]
       Optional arguments (for executing pymemdyn after this preparation:
+
       -h, --help
                     show help message
       -l LIGAND
