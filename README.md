@@ -57,6 +57,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
                 [-w WATERS] [-i IONS]
                 [--full_relax FULL_RELAX]
                 [--res RESTRAINT]
+      
       Optional arguments (for executing pymemdyn after this preparation:
 
       -h, --help
@@ -103,7 +104,36 @@ Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn
 From this point onward, the protocol will vary depending on whether you intend to perform MD simulations, FEP calculations, or both. Choose the appropriate protocol based on your objectives.
 
 #### 2.1 Free Energy Perturbation (FEP) with QligFEP
-If you do not have any intention of running MD simulations, choose `--full_relax False` when executing `setup_pym.py`. After that, choose option -n 1 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
+If you do not have any intention of running MD simulations, it is recommended to choose `--full_relax False` when executing `setup_pym.py`. After that, choose option -n 1 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
 
 #### 2.2 Molecular Dynamics (MD) or both
 If you want to do MD simulations or both MD and FEP, choose choose `--full_relax True` (or leave it blank) when executing `setup_py.py`. After that, choose option -n 2 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
+
+ ```bash
+      setup_md  [-C CLUSTER] [-n OPTION]
+                [-w WATERS] [-i IONS]
+                [--full_relax FULL_RELAX]
+                [--res RESTRAINT]
+      
+      Optional arguments (for executing pymemdyn after this preparation:
+
+      -h, --help
+                    show help message
+
+      -C CLUSTER
+                    Choose your cluster over the list.
+                    You can add more by modifying the code.
+      
+      -n OPTION
+                    Choose between prepare the system for:
+                    -n 1 for FEP
+                    -n 2 for FEP and/or MD
+      
+      -d DIR
+                    Directory for input md files (default:
+                    md_input_files)
+      -t TIME (ns)
+                    Time for MD simulation (in nanoseconds)
+      ```
+
+
