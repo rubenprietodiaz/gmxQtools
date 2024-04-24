@@ -92,6 +92,6 @@ This creates a folder for each ligand, executes ligpargen for ligand parameters 
 
 ### 2. Execute pymemdyn
 Execute submit.sh file in your cluster.
-Please check [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) documentation for instalation. The arguments were included in submit.sh script in step 1.2.6.
+Please check [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) documentation for instalation. The arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
 Will continue
