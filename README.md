@@ -94,4 +94,7 @@ This creates a folder for each ligand, executes ligpargen for ligand parameters 
 Execute submit.sh file in your cluster.
 Please check [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) documentation for instalation. The arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
+From this point onward, the protocol will vary depending on whether you intend to perform MD simulations, FEP calculations, or both. Choose the appropriate protocol based on your objectives.
+
+#### 2.1 Only Free Energy Perturbations (FEP) with QligFEP
 Will continue
