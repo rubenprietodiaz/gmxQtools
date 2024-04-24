@@ -61,6 +61,11 @@ In Maestro, protein and ligand preparation typically involve several steps to en
 
       -h, --help
                     show help message
+
+      -C CLUSTER
+                    Choose your cluster over the list.
+                    You can add more by modifying the code.
+      
       -l LIGAND
                     Ligand identifiers of ligands
                     present within the PDB file.
@@ -88,8 +93,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
                     See section 2 to choose.
       ```
 
-Edit the code for adding your own clusters.
-    
+   
 This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for        submitting to a cluster SLURM queue.
 
 ### 2. Execute pymemdyn
