@@ -70,7 +70,8 @@ In Maestro, protein and ligand preparation typically involve several steps to en
                     Ion identifiers of crystalized water
                     molecules present within the PDB file.
       
-      --res         Position restraints during MD production
+      --res [RESTRAINT]
+                    Position restraints during MD production
                     run. Options: bw (Ballesteros-Weinstein
                     Restrained Relaxation - default),
                     ca (C-Alpha Restrained Relaxation)
@@ -80,7 +81,10 @@ In Maestro, protein and ligand preparation typically involve several steps to en
                     If set to false, the run will finish after
                     the initial relaxation. (default = True)
       ```
-      
+
+This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for submitting to a cluster SLURM queue.
+
+6. **Run pymemdyn**: execute submit.sh file in 
 
 
 
