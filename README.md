@@ -50,7 +50,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
     - Export GPCR as pdb file, save as protein.pdb.
 
 6. **Prepare system for PyMemDyn**: at this point you have multiple ligands (and/or diferent poses for same ligand) as pdb files with residue name 'UNK' and the protein.
-   Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen][https://github.com/Isra3l/ligpargen], and rename the files properly for PyMemDyn. 
+   Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen](https://github.com/Isra3l/ligpargen), and rename the files properly for PyMemDyn. 
    
       ```bash
       setup_pym [-C CLUSTER] [-l LIGAND]
