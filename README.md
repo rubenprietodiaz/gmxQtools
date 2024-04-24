@@ -103,7 +103,7 @@ Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn
 From this point onward, the protocol will vary depending on whether you intend to perform MD simulations, FEP calculations, or both. Choose the appropriate protocol based on your objectives.
 
 #### 2.1 Free Energy Perturbation (FEP) with QligFEP
-If you do not have any intention of running MD simulations, choose `--full_relax False` when executing `setup_py.py`. After that, choose option -n 1 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
+If you do not have any intention of running MD simulations, choose `--full_relax False` when executing `setup_pym.py`. After that, choose option -n 1 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
 
 #### 2.2 Molecular Dynamics (MD) or both
 If you want to do MD simulations or both MD and FEP, choose choose `--full_relax True` (or leave it blank) when executing `setup_py.py`. After that, choose option -n 2 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
