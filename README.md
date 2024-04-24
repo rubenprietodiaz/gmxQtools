@@ -99,5 +99,5 @@ From this point onward, the protocol will vary depending on whether you intend t
 #### 2.1 Free Energy Perturbation (FEP) with QligFEP
 Will continue
 
-#### 2.2 Molecular Dynamics (MD) // MD and FEP
+#### 2.2 Molecular Dynamics (MD) or both
 Will continue
