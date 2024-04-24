@@ -19,7 +19,7 @@ After installation, you can convert xlsx files containing 'ID' and 'SMILES' colu
 rpmol [file_to_convert]
 ```
 
-The source code of rpmol is also included in '$FOLDER'.
+The source code of rpmol is also included in this repository.
 
 ### 1.2 Protein and Ligand Preparation
 
