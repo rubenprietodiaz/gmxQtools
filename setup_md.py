@@ -6,7 +6,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Script to copy files, create submit.sh, and modify simulation duration.")
     parser.add_argument("-d", "--output-dir", default="md_input_files", help="Output directory (default: md_input_files).")
     parser.add_argument("-t", "--simulation-time", type=int, help="Simulation time in nanoseconds.")
-    # Check README to see what I have to add here
+    # Check README to see what I have to add here, also add -T for time of simulation (hh:mm:ss)
     return parser.parse_args()
 
 def copy_files_in_directory(directory, destination_folder):
