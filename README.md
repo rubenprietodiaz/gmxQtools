@@ -30,7 +30,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
     - Execute Protein Preparation tool in Maestro.
 
 2. **Ligand Preparation**:
-    - Import the ligand structures (sdf file generated before)
+    - Import the ligand structures (sdf file generated before).
     - Execute Ligand Preparation tool in Maestro.
 
 3. **Pymodsim centering**: As the GPCR will be embedded in a membrane, you first need to align the protein with it.
