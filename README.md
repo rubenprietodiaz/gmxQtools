@@ -51,6 +51,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
 
 6. **Prepare system for pymemdyn**: at this point you have multiple ligands (and/or diferent poses for same ligand) as pdb files with residue name 'UNK' and the protein.
    Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen][https://github.com/Isra3l/ligpargen], and rename the files properly for pymemdyn.
+   
       ```bash
       setup_pym [-C CLUSTER] [-l LIGAND]
                 [-w WATERS] [-i IONS]
@@ -83,7 +84,8 @@ In Maestro, protein and ligand preparation typically involve several steps to en
       --full_relax [True/False]
                     Toggle for performing full MD relaxation.
                     If set to false, the run will finish after
-                    the initial relaxation. (default = True)
+                    the initial relaxation (default = True)
+                    See section 2 to choose.
       ```
 
 Edit the code for adding your own clusters.
