@@ -5,7 +5,7 @@ This repository provides tools and scripts for working with molecular dynamics (
 
 This pipeline outlines the workflow for working with G Protein-Coupled Receptors (GPCRs). All steps described below have been tested using Schrödinger software (Maestro) for file preparation (protprep, ligprep), and docking.
 
-### 1. Protein and Ligand Preparation
+### 1. Files preparation
 
 #### 1.1 Excel to SDF Conversion
 
