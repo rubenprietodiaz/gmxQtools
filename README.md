@@ -9,7 +9,7 @@ This pipeline outlines the workflow for working with G Protein-Coupled Receptors
 
 #### 1.1 Excel to SDF Conversion
 
-Quickly convert an Excel file containing IDs and SMILES to SDF format using `$FOLDER`. This can be done easily on your computer with a simple installation via pip:
+Quickly convert an Excel file containing IDs and SMILES to SDF format using `rpmol`. This can be done easily on your computer with a simple installation via pip:
 
 ```bash
 pip install rpmol
@@ -18,3 +18,5 @@ After installation, you can convert xlsx files containing 'ID' and 'SMILES' colu
 ```bash
 rpmol {file_to_convert}
 ```
+
+The source code of rpmol is also included in '$FOLDER'.
