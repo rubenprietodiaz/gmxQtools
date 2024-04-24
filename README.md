@@ -88,7 +88,4 @@ This creates a folder for each ligand, executes ligpargen for ligand parameters 
 
 7. **Run pymemdyn**: execute submit.sh file in your cluster.
 
-
-
-
-These steps ensure that both the protein and ligands are in a suitable state for subsequent docking studies. For detailed protocols and specific tools within Maestro, refer to the Schrödinger documentation or tutorials.
+Will continue
