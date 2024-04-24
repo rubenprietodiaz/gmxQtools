@@ -88,7 +88,7 @@ Edit the code for adding your own clusters.
     
 This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for           submitting to a cluster SLURM queue.
 
-### Execute pymemdyn
+### 2. Execute pymemdyn
 Execute submit.sh file in your cluster.
 
 Will continue
