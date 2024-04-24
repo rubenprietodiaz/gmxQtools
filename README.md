@@ -16,7 +16,60 @@ pip install rpmol
 ```
 After installation, you can convert xlsx files containing 'ID' and 'SMILES' columns to sdf. Also allows to convert sdf files to xlsx.
 ```bash
-rpmol {file_to_convert}
+rpmol [file_to_convert]
 ```
 
 The source code of rpmol is also included in '$FOLDER'.
+
+### 1.2 Protein and Ligand Preparation
+
+In Maestro, protein and ligand preparation typically involve several steps to ensure proper structure and compatibility for molecular docking studies. Here's a brief overview:
+
+1. **Protein Preparation**:
+    - Import the protein structure (usually in PDB format).
+    - Execute Protein Preparation tool in Maestro.
+
+2. **Ligand Preparation**:
+    - Import the ligand structures (sdf file generated before)
+    - Execute Ligand Preparation tool in Maestro.
+
+3. **Pymodsim centering**: As the GPCR will be embedded in a membrane, you first need to align the protein with it.
+    - Export prepared protein as pdb file.
+    - Follow the protocol of [PyModSim](https://github.com/GPCR-ModSim/pymodsim). For only alignment:
+      ```bash
+      pymodsim -n 3 -p [PDB]
+      ```
+      
+4. **Grid generation and ligand docking**: Create a grid to your specific requirements, and then proceed with ligand docking.
+   
+5. **Export files**:
+    - Export selected poses as pdb files.
+    - Export GPCR as pdb file, save as protein.pdb.
+
+6. **Prepare system for pymemdyn**: at this point you have multiple ligands (and/or diferent poses for same ligand) as pdb files with residue name 'UNK' and the protein.
+   Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen][https://github.com/Isra3l/ligpargen], and rename the files properly for pymemdyn.
+      ```bash
+      setup_pym [-C CLUSTER] [-l LIGAND]
+                [-w WATERS] [-i IONS]
+                [--full_relax FULL_RELAX]
+                [--res RESTRAINT]
+      Optional arguments (for executing pymemdyn after this preparation:
+      -h, --help
+                    show help message
+      -l LIGAND
+                    Ligand identifiers of ligands present within the PDB file. If multiple ligands are present, give a comma-delimited list.
+      -w WATERS
+                    Water identifiers of crystalized water molecules present within the PDB file.
+      -i IONS
+                    Ion identifiers of crystalized water molecules present within the PDB file.
+      --res         Position restraints during MD production run. Options: bw (Ballesteros-Weinstein Restrained Relaxation - default), ca (C-Alpha Restrained Relaxation)
+
+      --full_relax [True/False]
+                    Toggle for performing full MD relaxation. If set to false, the run will finish after the initial relaxation. (default = True)
+      ```
+      
+
+
+
+
+These steps ensure that both the protein and ligands are in a suitable state for subsequent docking studies. For detailed protocols and specific tools within Maestro, refer to the Schrödinger documentation or tutorials.
