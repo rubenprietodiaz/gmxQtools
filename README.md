@@ -36,6 +36,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
 3. **Pymodsim centering**: As the GPCR will be embedded in a membrane, you first need to align the protein with it.
     - Export prepared protein as pdb file.
     - Follow the protocol of [PyModSim](https://github.com/GPCR-ModSim/pymodsim). For only alignment:
+
       ```bash
       pymodsim -n 3 -p [PDB]
       ```
