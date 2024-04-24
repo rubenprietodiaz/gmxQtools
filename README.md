@@ -88,7 +88,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
 
 Edit the code for adding your own clusters.
     
-This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for           submitting to a cluster SLURM queue.
+This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for        submitting to a cluster SLURM queue.
 
 ### 2. Execute pymemdyn
 Execute submit.sh file in your cluster.
@@ -96,5 +96,8 @@ Please check [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) documentation f
 
 From this point onward, the protocol will vary depending on whether you intend to perform MD simulations, FEP calculations, or both. Choose the appropriate protocol based on your objectives.
 
-#### 2.1 Only Free Energy Perturbations (FEP) with QligFEP
+#### 2.1 Free Energy Perturbation (FEP) with QligFEP
+Will continue
+
+#### 2.2 Molecular Dynamics (MD) // MD and FEP
 Will continue
