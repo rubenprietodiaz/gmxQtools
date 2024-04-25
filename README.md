@@ -8,7 +8,7 @@ Clone the repository to your machine:
 
 `git clone https://github.com/your_username/gmxQTools.git``
 
-Ensure that you have the necessary dependencies installed, including GROMACS, Q, QligFEP, PyMemDyn, PyModSim, Ligpargen, Modeller, and Python packages specified in the `requirements.txt`file.
+Ensure that you have the necessary dependencies installed, including GROMACS, Q, QligFEP, PyMemDyn, PyModSim, Ligpargen, Modeller, and Python packages specified in the `requirements.txt` file.
 
 ## GPCR Work Pipeline
 
