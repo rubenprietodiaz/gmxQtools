@@ -122,7 +122,6 @@ If you have selected `--full_relax True` (by default) in PyMemDyn setup, MD and 
 
 Execute `setup_sim.py`
 
-    ```bash
         setup_sim [-C CLUSTER]
                   [-t TIME]
         
@@ -142,6 +141,5 @@ Execute `setup_sim.py`
         -f COMPLEX
                     Directory of the complex to prepare FEP files. 
                     Omit if you don't want to prepare FEP files.
-    ```
 
 
