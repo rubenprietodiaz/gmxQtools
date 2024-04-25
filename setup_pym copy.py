@@ -5,12 +5,11 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Process ligand and protein for PyMemDyn execution.")
     parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="TETRA", help="Choose the cluster (default: TETRA).")
     parser.add_argument("-p", "--protein", nargs='?', default="protein.pdb", help="Protein file name (default: protein.pdb).")
-    parser.add_argument("-l", nargs='?', default="LIG", help="Ligand identifier (default: LIG).")
-
     # Parameters for Pymemdyn execution
-    parser.add_argument("--res", nargs='?', default="ca", help="Restraints (default: ca).")
-    parser.add_argument("-w", nargs='?', default="HOH", help="Water identifiers (default: HOH).")
-    parser.add_argument("-i", nargs='?', default="NA", help="Ion identifiers (default: NA).")
+    parser.add_argument("--res", nargs='?', default="ca", help="Restraints argument (default: ca).")
+    parser.add_argument("-w", nargs='?', default="HOH", help="Water argument (default: HOH).")
+    parser.add_argument("-i", nargs='?', default="NA", help="Ion argument (default: NA).")
+    parser.add_argument("-l", nargs='?', default="LIG", help="Ligand argument (default: LIG).")
     parser.add_argument("--full_relax", nargs='?', default="True", help="Full relaxation option (default: True). Choose False for no relaxation after constrained steps in pymemdyn.")
     return parser.parse_args()
 
@@ -31,7 +30,7 @@ for file in os.listdir('.'):
         
         # Remove unnecessary lines and replace UNK with LIG
         content = [line for line in content if not line.startswith(('END', 'CONECT', 'REMARK', 'TITLE'))]
-        content = [line.replace(args.l, 'LIG') for line in content]
+        content = [line.replace('UNK', args.l) for line in content]
         
         # Create a directory named after the ligand file (without the .pdb extension)
         dir_name = os.path.splitext(file)[0]
@@ -68,7 +67,7 @@ for file in os.listdir('.'):
 #SBATCH -t 24:00:00
 #SBATCH --gpus-per-task=1
 #SBATCH --job-name=pymemdyn
-pymemdyn -p complex.pdb --res {} -w {} -i {} -l LIG --full_relax {}""".format(args.res, args.w, args.i, args.full_relax)
+pymemdyn -p complex.pdb --res {} -w {} -i {} -l {} --full_relax {}""".format(args.res, args.w, args.i, args.l, args.full_relax)
         elif args.cluster == "CESGA":
             pymemdyn_content = """#!/bin/bash -l
 #SBATCH -N 1
@@ -76,14 +75,14 @@ pymemdyn -p complex.pdb --res {} -w {} -i {} -l LIG --full_relax {}""".format(ar
 #SBATCH --mem-per-cpu=4G
 #SBATCH -t 24:00:00
 #SBATCH --job-name=pymemdyn
-pymemdyn -p complex.pdb --res {} -w {} -i {} -l LIG --full_relax {}""".format(args.res, args.w, args.i, args.full_relax)
+pymemdyn -p complex.pdb --res {} -w {} -i {} -l {} --full_relax {}""".format(args.res, args.w, args.i, args.l, args.full_relax)
         elif args.cluster == "TETRA":
             pymemdyn_content = """#!/bin/bash -l
 #SBATCH -N 1
 #SBATCH -n 32
 #SBATCH -t 24:00:00
 #SBATCH --job-name=pymemdyn
-pymemdyn -p complex.pdb --res {} -w {} -i {} -l LIG --full_relax {}""".format(args.res, args.w, args.i, args.full_relax)
+pymemdyn -p complex.pdb --res {} -w {} -i {} -l {} --full_relax {}""".format(args.res, args.w, args.i, args.l, args.full_relax)
         
         with open('pymemdyn.sh', 'w') as f_pymemdyn:
             f_pymemdyn.write(pymemdyn_content)
@@ -93,7 +92,7 @@ pymemdyn -p complex.pdb --res {} -w {} -i {} -l LIG --full_relax {}""".format(ar
         
         print("Created complex.pdb, executed ligpargen, renamed files, and created pymemdyn.sh in", dir_name)
 
-# Create directory for input files and move all *.pdb to that directory
+# Create directory for input files and move all *.pdb to that directory (backup)
 os.makedirs('inputFiles', exist_ok=True)
 os.system('mv *.pdb inputFiles/')
 print("Created backup of input files in inputFiles/.")

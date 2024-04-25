@@ -52,26 +52,27 @@ In Maestro, protein and ligand preparation typically involve several steps to en
 6. **Prepare system for PyMemDyn**: at this point you have multiple ligands (and/or diferent poses for same ligand) as pdb files with residue name 'UNK' and the protein.
    Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen](https://github.com/Isra3l/ligpargen), and rename the files properly for PyMemDyn. 
    
-      ```bash
-      setup_pym [-C CLUSTER] [-l LIGAND]
-                [-w WATERS] [-i IONS]
-                [--full_relax FULL_RELAX]
+    ```bash
+      setup_pym [-C CLUSTER] [-p PROTEIN]
+                [-l LIGAND] [-w WATERS]
+                [-i IONS] [--full_relax FULL_RELAX]
                 [--res RESTRAINT]
       
-      Optional arguments (for executing pymemdyn after this preparation:
-
       -h, --help
                     show help message
 
       -C CLUSTER
                     Choose your cluster over the list.
                     You can add more by modifying the code.
-      
+      -p PROTEIN 
+                    PDB file of your protein
+                    (default = protein.pdb)
       -l LIGAND
-                    Ligand identifiers of ligands
-                    present within the PDB file.
-                    If multiple ligands are present,
-                    give a comma-delimited list.
+                    Ligand identifiers of ligand in pdb.
+                    (default = UNK, from Maestro)
+    
+    Optional arguments for executing pymemdyn after this preparation:
+
       
       -w WATERS
                     Water identifiers of crystalized
@@ -92,7 +93,7 @@ In Maestro, protein and ligand preparation typically involve several steps to en
                     If set to false, the run will finish after
                     the initial relaxation (default = True)
                     See section 2 to choose.
-      ```
+    ```
 
    
 This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for        submitting to a cluster SLURM queue.
