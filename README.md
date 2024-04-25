@@ -107,13 +107,11 @@ From this point onward, the protocol will vary depending on whether you intend t
 If you do not have any intention of running MD simulations, it is recommended to choose `--full_relax False` when executing `setup_pym.py`. After that, choose option -n 1 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
 
 #### 2.2 Molecular Dynamics (MD) or both
-If you want to do MD simulations or both MD and FEP, choose choose `--full_relax True` (or leave it blank) when executing `setup_py.py`. After that, choose option -n 2 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
+If you want to do MD simulations or both MD and FEP, choose choose `--full_relax True` (or leave it blank) when executing `setup_pym.py`. After that, choose option -n 2 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
 
  ```bash
       setup_md  [-C CLUSTER] [-n OPTION]
-                [-w WATERS] [-i IONS]
-                [--full_relax FULL_RELAX]
-                [--res RESTRAINT]
+                [-d DIR] [-t TIME]
       
       Optional arguments (for executing pymemdyn after this preparation:
 
