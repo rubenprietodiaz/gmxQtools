@@ -3,6 +3,13 @@ This repository provides tools and scripts for working with molecular dynamics (
 
 All the scripts and the pipeline are optimized for batch processing of MD simulations, handling numerous ligands, folders, and proteins.
 
+## Installation
+Clone the repository to your machine:
+
+`git clone https://github.com/your_username/gmxQTools.git``
+
+Ensure that you have the necessary dependencies installed, including GROMACS, Q, QligFEP, PyMemDyn, PyModSim, Ligpargen, Modeller, and Python packages specified in the `requirements.txt`file.
+
 ## GPCR Work Pipeline
 
 This pipeline outlines the workflow for working with G Protein-Coupled Receptors (GPCRs). All steps described below have been tested using Schrödinger software (Maestro) for file preparation (protprep, ligprep), and docking.
@@ -113,7 +120,7 @@ Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn
 ### 3. Preparation of MD and FEP input files
 If you have selected `--full_relax True` (by default) in PyMemDyn setup, MD and FEP directories can be generated. If you have selected `--full_relax False` in PyMemDyn setup, only a directory for FEP can be generated.
 
-1. **File preparation for MD simulations**: Execute `setup_md.py`
+Execute `setup_md.py`
 
     ```bash
         setup_md  [-C CLUSTER]
@@ -131,20 +138,10 @@ If you have selected `--full_relax True` (by default) in PyMemDyn setup, MD and 
 
         -rt RUNTIME (hours)
                     Limit of time for simulation (in hours)
+                    
+        -f COMPLEX
+                    Directory of the complex to prepare FEP files. 
+                    Omit if you don't want to prepare FEP files.
     ```
 
-2. **File preparation for FEP calculations**: Execute `setup_fep.py` to prepare the selected complex for QligFEP simulations. This script trims the complex, removing unnecessary membrane and water residues for QligFEP, renumbering the system, and subsequently addressing discrepancies between residue names and atom types between QligFEP and GROMACS.
-
-
-    ```bash
-        setup_md  [-c COMPLEX]
-                  [-t TIME]
-        
-        -h, --help
-                    show help message
-        
-        -c COMPLEX
-                    root directory
-                    (e.g., md_results/ligand1)             
-    ```
 

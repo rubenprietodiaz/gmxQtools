@@ -1,13 +1,18 @@
 import os
 import shutil
 import argparse
+import subprocess
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Script to copy files, create submit.sh, and modify simulation duration.")
     parser.add_argument("-t", "--simulation-time", type=int, help="Simulation time in nanoseconds (default by PyMemDyn: 10 ns).")
     parser.add_argument("-rt", "--runtime", type=int, help="Runtime in hours (default: 24).", default=24)
     parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="TETRA", help="Choose the cluster (default: TETRA).")
+    parser.add_argument("-f", "--fep", help="Directory of the complex to prepare FEP files. Omit if you don't want to prepare FEP files.")
     return parser.parse_args()
+
+# Parse arguments
+args = parse_arguments()
 
 def copy_files_in_directory(directory, destination_folder):
     # Iterate over the folders within the current directory
@@ -16,10 +21,14 @@ def copy_files_in_directory(directory, destination_folder):
             current_folder = os.path.join(root, dir)
             # Call the copy_files function to copy files in the current folder
             copy_files(current_folder, destination_folder)
+    # Create submit script outside the loop
+    create_submit_script(destination_folder)
+    print(f"Folder {destination_folder} with scripts and necessary files created. Run 'cd {destination_folder}' and 'sh submit.sh' to start the simulations. If you want to do more than one replica, copy {destination_folder} before running any simulation.")
+
 
 def copy_files(folder, destination_folder):
     # Check the existence of each required file
-    if all(os.path.isfile(os.path.join(folder, file)) for file in ["prod.mdp", "topol.top", "index.ndx"]):
+    if all(os.path.isfile(os.path.join(folder, file)) for file in ["prod.mdp", "topol.top", "index.ndx","topol.tpr"]) and os.path.exists(os.path.join(folder, "finalOutput", "confout.gro")):
         # Extract the name of the current folder
         folder_name = os.path.basename(folder)
 
@@ -28,7 +37,7 @@ def copy_files(folder, destination_folder):
         os.makedirs(destination_folder_path, exist_ok=True)
 
         # Copy the files to the corresponding folder
-        for file in ["prod.mdp", "topol.top", "index.ndx"]:
+        for file in ["prod.mdp", "topol.top", "index.ndx", "topol.tpr"]:
             shutil.copy(os.path.join(folder, file), destination_folder_path)
 
         # Check the existence of the finalOutput folder
@@ -43,15 +52,14 @@ def copy_files(folder, destination_folder):
             if itp_file.endswith(".itp"):
                 shutil.copy(os.path.join(folder, itp_file), destination_folder_path)
 
-        # Create the submit.sh script inside the destination folder
-        create_submit_script(destination_folder_path)
-
         # Create the run_md.sh script inside the destination folder
         create_run_md_script(destination_folder_path)
 
         # Modify prod.mdp if simulation time is provided
         if args.simulation_time:
             modify_simulation_time(destination_folder_path)
+    else:
+        return False
 
 def create_submit_script(destination_folder):
     submit_script_content = """#!/bin/bash
@@ -94,7 +102,8 @@ srun gmx mdrun -s topol_prod.tpr -o traj.trr -e ener.edr -c final.gro -g product
 gmx grompp -f prod.mdp -c confout.gro -p topol.top -n index.ndx -o topol_prod.tpr --maxwarn 1
 srun gmx_mpi mdrun -s topol_prod.tpr -o traj.trr -e ener.edr -c confout.gro -g production.log -x traj_prod.xtc
 """
-    elif args.cluster == "TETRA": f"""#!/bin/bash
+    elif args.cluster == "TETRA": 
+        run_md_script_content = f"""#!/bin/bash
 
 #SBATCH --job-name=MD
 #SBATCH -N 1
@@ -129,8 +138,77 @@ def modify_simulation_time(destination_folder):
             else:
                 prod_mdp_file.write(line)
 
-# Parse arguments
-args = parse_arguments()
+def prepare_fep_files(complex_directory, destination_folder_fep):
+    # Asegurarnos de que la ruta al directorio complejo es absoluta y existe
+    complex_directory = os.path.abspath(complex_directory)
+    if not os.path.isdir(complex_directory):
+        print(f"Error: The specified complex directory {complex_directory} does not exist.")
+        return
+
+    # Definir los directorios correctamente
+    eqProd_directory = os.path.join(complex_directory, "eqProd")
+    confout_gro = os.path.join(eqProd_directory, "confout200.gro")
+
+    # Verificar si confout200.gro existe antes de continuar
+    if not os.path.isfile(confout_gro):
+        print(f"Error: confout200.gro not found in {eqProd_directory}.")
+        return
+
+    # Copy confout200.gro (before full relax) to ../confout_fep.gro
+    confout_fep_gro = os.path.join(complex_directory, "confout_fep.gro")
+    shutil.copy(confout_gro, confout_fep_gro)
+
+    # Run gmx trjconv 
+    command = ["gmx", "trjconv", "-pbc", "mol", "-center", "-ur", "compact", "-f", confout_fep_gro, "-o", "confout_fep.pdb"]
+    with open(os.path.join(destination_folder_fep, "trjconv.log"), "w") as logfile:
+        subprocess.run(command, stdout=logfile, stderr=subprocess.STDOUT, text=True, input="1\n0\n", cwd=complex_directory)
+
+    # Move confout_fep.pdb to destination_folder_fep
+    shutil.move(os.path.join(complex_directory, "confout_fep.pdb"), os.path.join(destination_folder_fep, "confout_fep.pdb"))
+    print(f"File confout_fep.pdb created successfully in {destination_folder_fep}.")
+
+def process_water_molecules(input_pdb, output_pdb):
+    pymol_script = f"""
+load {input_pdb}
+select water, solvent within 10 of polymer
+select water_2, solvent within 10 of resn popc
+select water_3, water and water_2
+save {output_pdb}, water_3
+"""
+    with open("get_waters.pml", "w") as file:
+        file.write(pymol_script)
+    subprocess.run(["pymol", "-c", "get_waters.pml"], check=True)
+    os.remove("get_waters.pml")
+
+def rename_and_remove_elements(pdb_file):
+    subprocess.run(["grep", "'SOL'", pdb_file, ">", "temp.pdb"])
+    shutil.move("temp.pdb", pdb_file.replace("confout_water", "confout"))
+    subprocess.run(["sed", "-i", "'s/SOL/HOH/g'", pdb_file])
+    subprocess.run(["sed", "-i", "'s/OW/O /g'", pdb_file])
+    subprocess.run(["sed", "-i", "'s/HW1/H1 /g'", pdb_file])
+    subprocess.run(["sed", "-i", "'s/HW2/H2 /g'", pdb_file])
+
+def clean_pdb(original_pdb, ligand):
+    temp_file = original_pdb.replace('.pdb', '_temp.pdb')
+    ligand_file = os.path.join(os.path.dirname(original_pdb), f"{ligand}.pdb")
+
+    with open(original_pdb, 'r') as file:
+        lines = file.readlines()
+
+    with open(temp_file, 'w') as out_file, open(ligand_file, 'w') as ligand_out:
+        for line in lines:
+            if ligand in line:
+                ligand_out.write(line)
+            if ligand not in line and 'SOL' not in line and 'CL-' not in line and 'O1 ' not in line and 'END' not in line and 'TER' not in line:
+                out_file.write(line)
+    
+    shutil.move(temp_file, original_pdb)
+    print(f"Removed unwanted lines from {original_pdb} and saved ligand to {ligand_file}.")
+    
+def add_water_to_pdb(pdb_file, water_pdb):
+    with open(water_pdb, 'r') as water_file, open(pdb_file, 'a') as file:
+        file.writelines(water_file.readlines())
+
 
 # Define the destination folder
 destination_folder = "md_input_files"
@@ -138,7 +216,21 @@ destination_folder = "md_input_files"
 # Call the function to start copying files in the current directory
 copy_files_in_directory(".", destination_folder)
 
-# Create the submit.sh script inside the destination folder
-create_submit_script(destination_folder)
+# Check if the user wants to prepare FEP files
+if args.fep:
+    destination_folder_fep = "fep_preparation_files"
+    os.makedirs(destination_folder_fep, exist_ok=True)
+    prepare_fep_files(args.fep, destination_folder_fep)
 
-print(f"Folder {destination_folder} with scripts and necessary files created. Run 'cd {destination_folder}' and 'sh submit.sh' to start the simulations. If you want to do more than one replica, copy {destination_folder} before running any simulation.")
+    # Define paths to the PDB files
+    input_pdb = os.path.join(destination_folder_fep, "confout_fep.pdb")
+    output_pdb = os.path.join(destination_folder_fep, "confout_water.pdb")
+
+    # Process water molecules
+    process_water_molecules(input_pdb, output_pdb)
+    clean_pdb(input_pdb, "L01")
+    add_water_to_pdb(input_pdb, output_pdb)
+    os.remove(output_pdb) # Remove the temporary file of waters
+
+else:
+    print("No complex directory specified for FEP preparation.")
