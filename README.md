@@ -43,52 +43,53 @@ In Maestro, protein and ligand preparation typically involve several steps to en
       pymodsim -n 3 -p [PDB]
       ```
       
-4. **Grid generation and ligand docking**: Create a grid to your specific requirements, and then proceed with ligand docking.
+4. **Grid generation and ligand docking**: Import pymodsim aligned protein and create a grid to your specific requirements. Then proceed with ligand docking.
    
 5. **Export files**:
     - Export selected poses as pdb files.
-    - Export GPCR as pdb file, save as protein.pdb.
+    - Export GPCR as pdb file. We recommend to name it protein.pdb (default for -p in next step).
 
 6. **Prepare system for PyMemDyn**: at this point you have multiple ligands (and/or diferent poses for same ligand) as pdb files with residue name 'UNK' and the protein.
-   Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen](https://github.com/Isra3l/ligpargen), and rename the files properly for PyMemDyn. 
+
+Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen](https://github.com/Isra3l/ligpargen), and rename the files properly for PyMemDyn. 
    
     ```bash
-      setup_pym [-C CLUSTER] [-p PROTEIN]
+        setup_pym [-C CLUSTER] [-p PROTEIN]
                 [-l LIGAND] [-w WATERS]
                 [-i IONS] [--full_relax FULL_RELAX]
                 [--res RESTRAINT]
-      
-      -h, --help
+        
+        -h, --help
                     show help message
 
-      -C CLUSTER
+        -C CLUSTER
                     Choose your cluster over the list.
                     You can add more by modifying the code.
-      -p PROTEIN 
+        -p PROTEIN 
                     PDB file of your protein
                     (default = protein.pdb)
-      -l LIGAND
+        -l LIGAND
                     Ligand identifiers of ligand in pdb.
                     (default = UNK, from Maestro)
-    
+
     Optional arguments for executing pymemdyn after this preparation:
 
-      
-      -w WATERS
+        
+        -w WATERS
                     Water identifiers of crystalized
                     water molecules present within
                     the PDB file.
-      -i IONS
+        -i IONS
                     Ion identifiers of crystalized water
                     molecules present within the PDB file.
-      
-      --res [RESTRAINT]
+        
+        --res [RESTRAINT]
                     Position restraints during MD production
                     run. Options: bw (Ballesteros-Weinstein
                     Restrained Relaxation - default),
                     ca (C-Alpha Restrained Relaxation)
 
-      --full_relax [True/False]
+        --full_relax [True/False]
                     Toggle for performing full MD relaxation.
                     If set to false, the run will finish after
                     the initial relaxation (default = True)

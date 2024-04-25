@@ -112,4 +112,4 @@ with open('submit.sh', 'w') as f_submit:
     f_submit.write("echo 'All jobs submitted.'\n")
 
 print("submit.sh created successfully.")
-print("All processes complete.")
+print("All processes complete. Pymemdyn execution ready, run 'sh submit.sh' to start.")
