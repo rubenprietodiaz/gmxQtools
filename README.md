@@ -62,7 +62,6 @@ In Maestro, protein and ligand preparation typically involve several steps to en
 
 Execute 'setup_pym.py' in the directory containing all the files to create complexes between ligand and receptor, generate parameters of the ligands using [Ligpargen](https://github.com/Isra3l/ligpargen), and rename the files properly for PyMemDyn. 
    
-    ```bash
         setup_pym [-C CLUSTER] [-p PROTEIN]
                   [-l LIGAND] [-w WATERS]
                   [-i IONS] [--full_relax FULL_RELAX]
@@ -105,7 +104,6 @@ Execute 'setup_pym.py' in the directory containing all the files to create compl
                     Choose False for only performing FEP
                     after PyMemDyn. Choose True for both
                     FEP and MD input files generation
-    ```
 
    
 This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for        submitting to a cluster SLURM queue.
