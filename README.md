@@ -106,7 +106,7 @@ Execute submit.sh file in your cluster.
 Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
 ```bash
-sh setup.py
+sh submit.sh
 ```
 
 From this point onward, the protocol will vary depending what 
