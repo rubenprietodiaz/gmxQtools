@@ -23,7 +23,7 @@ rpmol [file_to_convert]
 
 The source code of rpmol is also included in this repository.
 
-### 1.2 Protein and Ligand Preparation
+#### 1.2 Protein and Ligand Preparation
 
 In Maestro, protein and ligand preparation typically involve several steps to ensure proper structure and compatibility for molecular docking studies. Here's a brief overview:
 
@@ -55,9 +55,9 @@ Execute 'setup_pym.py' in the directory containing all the files to create compl
    
     ```bash
         setup_pym [-C CLUSTER] [-p PROTEIN]
-                [-l LIGAND] [-w WATERS]
-                [-i IONS] [--full_relax FULL_RELAX]
-                [--res RESTRAINT]
+                  [-l LIGAND] [-w WATERS]
+                  [-i IONS] [--full_relax FULL_RELAX]
+                  [--res RESTRAINT]
         
         -h, --help
                     show help message
@@ -101,40 +101,47 @@ Execute 'setup_pym.py' in the directory containing all the files to create compl
    
 This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for        submitting to a cluster SLURM queue.
 
-### 2. Execute pymemdyn
-Execute submit.sh file in your cluster.
-Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
+### 2. PyMemDyn execution
+PyMemDyn is a standalone python package to setup membrane molecular dynamics calculations using the GROMACS set of programs. In the previous steps, you have prepared your system for PyMemDyn. For running it, execute submit.sh file in your cluster.
 
 ```bash
 sh submit.sh
 ```
 
-From this point onward, the protocol will vary depending what 
+Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
-1. **Free Energy Perturbation (FEP) with QligFEP*+:
-If you do not have any intention of running MD simulations, it is recommended to choose `--full_relax False` when executing `setup_pym.py`. After that, choose option -n 1 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
+### 3. Preparation of MD and FEP input files
+If you have selected `--full_relax True` (by default) in PyMemDyn setup, MD and FEP directories can be generated. If you have selected `--full_relax False` in PyMemDyn setup, only a directory for FEP can be generated.
 
-#### 2.2 Molecular Dynamics (MD) or both
-If you want to do MD simulations or both MD and FEP, choose choose `--full_relax True` (or leave it blank) when executing `setup_pym.py`. After that, choose option -n 2 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
+1. **File preparation for MD simulations**: Execute `setup_md.py`
 
- ```bash
-      setup_md  [-C CLUSTER]
-                [-d DIR] [-t TIME]
-      
-      Optional arguments
-
-      -h, --help
+    ```bash
+        setup_md  [-C CLUSTER]
+                  [-t TIME]
+        
+        -h, --help
                     show help message
 
-      -C CLUSTER
+        -C CLUSTER
                     Choose your cluster over the list.
                     You can add more by modifying the code.
-      
-      -d DIR
-                    Directory for input md files (default:
-                    md_input_files)
-      -t TIME (ns)
+        
+        -t TIME (ns)
                     Time for MD simulation (in nanoseconds)
- ```
+    ```
 
+2. **File preparation for FEP calculations**: Execute `setup_fep.py` to prepare the selected complex for QligFEP simulations. This script trims the complex, removing unnecessary membrane and water residues for QligFEP, renumbering the system, and subsequently addressing discrepancies between residue names and atom types between QligFEP and GROMACS.
+
+
+    ```bash
+        setup_md  [-c complex]
+                  [-t TIME]
+        
+        -h, --help
+                    show help message
+        
+        -c COMPLEX
+                    root directory
+                    (e.g., md_results/ligand1)             
+    ```
 

@@ -4,8 +4,7 @@ import argparse
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Script to copy files, create submit.sh, and modify simulation duration.")
-    parser.add_argument("-d", "--output-dir", default="md_input_files", help="Output directory (default: md_input_files).")
-    parser.add_argument("-t", "--simulation-time", type=int, help="Simulation time in nanoseconds.")
+    parser.add_argument("-t", "--simulation-time", type=int, help="Simulation time in nanoseconds (default by PyMemDyn: 10 ns).")
     parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="TETRA", help="Choose the cluster (default: TETRA).")
     
     return parser.parse_args()
@@ -110,7 +109,7 @@ def modify_simulation_time(destination_folder):
 args = parse_arguments()
 
 # Define the destination folder
-destination_folder = args.output_dir
+destination_folder = "md_output_files"
 
 # Call the function to start copying files in the current directory
 copy_files_in_directory(".", destination_folder)
