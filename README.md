@@ -23,7 +23,9 @@ Quickly convert an Excel file containing IDs and SMILES to SDF format using `rpm
 ```bash
 pip install rpmol
 ```
+
 After installation, you can convert xlsx files containing 'ID' and 'SMILES' columns to sdf. Also allows to convert sdf files to xlsx.
+
 ```bash
 rpmol [file_to_convert]
 ```
