@@ -120,10 +120,10 @@ Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn
 ### 3. Preparation of MD and FEP input files
 If you have selected `--full_relax True` (by default) in PyMemDyn setup, MD and FEP directories can be generated. If you have selected `--full_relax False` in PyMemDyn setup, only a directory for FEP can be generated.
 
-Execute `setup_md.py`
+Execute `setup_sim.py`
 
     ```bash
-        setup_md  [-C CLUSTER]
+        setup_sim [-C CLUSTER]
                   [-t TIME]
         
         -h, --help
