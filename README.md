@@ -93,7 +93,9 @@ Execute 'setup_pym.py' in the directory containing all the files to create compl
                     Toggle for performing full MD relaxation.
                     If set to false, the run will finish after
                     the initial relaxation (default = True)
-                    See section 2 to choose.
+                    Choose False for only performing FEP
+                    after PyMemDyn. Choose True for both
+                    FEP and MD input files generation.
     ```
 
    
@@ -103,19 +105,23 @@ This creates a folder for each ligand, executes ligpargen for ligand parameters 
 Execute submit.sh file in your cluster.
 Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
-From this point onward, the protocol will vary depending on whether you intend to perform MD simulations, FEP calculations, or both. Choose the appropriate protocol based on your objectives.
+```bash
+sh setup.py
+```
 
-#### 2.1 Free Energy Perturbation (FEP) with QligFEP
+From this point onward, the protocol will vary depending what 
+
+1. **Free Energy Perturbation (FEP) with QligFEP*+:
 If you do not have any intention of running MD simulations, it is recommended to choose `--full_relax False` when executing `setup_pym.py`. After that, choose option -n 1 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
 
 #### 2.2 Molecular Dynamics (MD) or both
 If you want to do MD simulations or both MD and FEP, choose choose `--full_relax True` (or leave it blank) when executing `setup_pym.py`. After that, choose option -n 2 to prepare your system for FEP when running `setup_md.py`. (TO BE INCLUDED)
 
  ```bash
-      setup_md  [-C CLUSTER] [-n OPTION]
+      setup_md  [-C CLUSTER]
                 [-d DIR] [-t TIME]
       
-      Optional arguments (for executing pymemdyn after this preparation:
+      Optional arguments
 
       -h, --help
                     show help message
@@ -123,11 +129,6 @@ If you want to do MD simulations or both MD and FEP, choose choose `--full_relax
       -C CLUSTER
                     Choose your cluster over the list.
                     You can add more by modifying the code.
-      
-      -n OPTION
-                    Choose between prepare the system for:
-                    -n 1 for FEP
-                    -n 2 for FEP and/or MD
       
       -d DIR
                     Directory for input md files (default:
