@@ -64,7 +64,7 @@ Execute 'setup_pym.py' in the directory containing all the files to create compl
 
         -C CLUSTER
                     Choose your cluster over the list.
-                    You can add more by modifying the code.
+                    You can add more by modifying the code
         -p PROTEIN 
                     PDB file of your protein
                     (default = protein.pdb)
@@ -95,7 +95,7 @@ Execute 'setup_pym.py' in the directory containing all the files to create compl
                     the initial relaxation (default = True)
                     Choose False for only performing FEP
                     after PyMemDyn. Choose True for both
-                    FEP and MD input files generation.
+                    FEP and MD input files generation
     ```
 
    
@@ -124,17 +124,20 @@ If you have selected `--full_relax True` (by default) in PyMemDyn setup, MD and 
 
         -C CLUSTER
                     Choose your cluster over the list.
-                    You can add more by modifying the code.
+                    You can add more by modifying the code
         
         -t TIME (ns)
                     Time for MD simulation (in nanoseconds)
+
+        -rt RUNTIME (hours)
+                    Limit of time for simulation (in hours)
     ```
 
 2. **File preparation for FEP calculations**: Execute `setup_fep.py` to prepare the selected complex for QligFEP simulations. This script trims the complex, removing unnecessary membrane and water residues for QligFEP, renumbering the system, and subsequently addressing discrepancies between residue names and atom types between QligFEP and GROMACS.
 
 
     ```bash
-        setup_md  [-c complex]
+        setup_md  [-c COMPLEX]
                   [-t TIME]
         
         -h, --help
