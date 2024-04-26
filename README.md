@@ -6,7 +6,7 @@ All the scripts and the pipeline are optimized for batch processing of MD simula
 ## Installation
 Clone the repository to your machine:
 
-`git clone https://github.com/your_username/gmxQTools.git``
+git clone https://github.com/your_username/gmxQTools.git
 
 Ensure that you have the necessary dependencies installed, including GROMACS, Q, QligFEP, PyMemDyn, PyModSim, Ligpargen, Modeller, and Python packages specified in the `requirements.txt` file.
 
