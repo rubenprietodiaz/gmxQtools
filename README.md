@@ -3,6 +3,8 @@ This repository provides tools and scripts for working with molecular dynamics (
 
 All the scripts and the pipeline are optimized for batch processing of MD simulations, handling numerous ligands, folders, and proteins.
 
+Contact: [Rubén Prieto-Díaz (PhD)](https://twitter.com/bentoaz)
+
 ## Installation
 Clone the repository to your machine:
 
@@ -146,4 +148,4 @@ Execute `setup_sim.py`
                     Put the directory of the complex to prepare FEP files. 
     ```
 
-
+After that, you will get two directories: md_input_files and fep_preparation_files. If you want to submit your new md_input_files, you only need to enter and execute `sh submit.sh`. For FEP files, you should download the generated structures and model all the ligands you want. Therefore, you can follow the protocol of [QligFEP](https://github.com/qusers/qligfep).
