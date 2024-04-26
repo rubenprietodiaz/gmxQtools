@@ -3,7 +3,6 @@ This repository provides tools and scripts for working with molecular dynamics (
 
 All the scripts and the pipeline are optimized for batch processing of MD simulations, handling numerous ligands, folders, and proteins.
 
-Contact: [Rubén Prieto-Díaz (PhD)](https://twitter.com/bentoaz)
 
 ## Installation
 Clone the repository to your machine:
