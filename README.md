@@ -125,7 +125,7 @@ If you have selected `--full_relax True` (by default) in PyMemDyn setup, MD and 
 
 Execute `setup_sim.py`
 
-    ```bash
+```bash
         setup_sim [-C CLUSTER]
                   [-t TIME]
         
@@ -145,6 +145,6 @@ Execute `setup_sim.py`
         -f COMPLEX
                     Flag for preparation of FEP files.
                     Put the directory of the complex to prepare FEP files. 
-    ```
+```
 
 After that, you will get two directories: md_input_files and fep_preparation_files. If you want to submit your new md_input_files, you only need to enter and execute `sh submit.sh`. For FEP files, you should download the generated structures and model all the ligands you want. Therefore, you can follow the protocol of [QligFEP](https://github.com/qusers/qligfep).
