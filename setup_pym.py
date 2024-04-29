@@ -102,6 +102,7 @@ print("Created backup of input files in inputFiles/.")
 with open('submit.sh', 'w') as f_submit:
     f_submit.write("#!/bin/bash\n\n")
     f_submit.write("echo 'Processing directories:'\n")
+    f_submit.write("start_dir=$(pwd)\n")
     f_submit.write("for folder in ./*; do\n")
     f_submit.write("    if [ -d \"$folder\" ]; then\n")
     f_submit.write("        cd \"$folder\" || continue\n")
