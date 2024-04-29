@@ -120,8 +120,8 @@ Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn
 For preparing the files for running an MD simulation, execute `setup_sim.py`.
 
 ```bash
-        setup_sim [-C CLUSTER]
-                  [-t TIME]
+        setup_md  [-C CLUSTER] [-t TIME]
+                  [-rt RUNTIME]
         
         -h, --help
                     show help message
