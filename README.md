@@ -105,19 +105,19 @@ Execute 'setup_pym.py' in the directory containing all the files to create compl
                     the initial relaxation.
 
    
-This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for        submitting to a cluster SLURM queue.
+This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit_pym.sh for submitting to a cluster SLURM queue.
 
 ### 2. PyMemDyn execution
-PyMemDyn is a standalone python package to setup membrane molecular dynamics calculations using the GROMACS set of programs. In the previous steps, you have prepared your system for PyMemDyn. For running it, execute submit.sh file in your cluster.
+PyMemDyn is a standalone python package to setup membrane molecular dynamics calculations using the GROMACS set of programs. In the previous steps, you have prepared your system for PyMemDyn. For running it, execute submit_pym.sh file in your cluster.
 
 ```bash
-sh submit.sh
+sh submit_pym.sh
 ```
 
-Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
+Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit_pym.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
 ### 3. Preparation of MD
-For preparing the files for running an MD simulation, execute `setup_sim.py`.
+For preparing the files for running an MD simulation, execute `setup_md.py`.
 
 ```bash
         setup_md  [-C CLUSTER] [-t TIME]
@@ -137,4 +137,4 @@ For preparing the files for running an MD simulation, execute `setup_sim.py`.
                     Limit of time for simulation (in hours)
 ```
 
-After that, you will get md_input_files. For submitting MD, to enter and execute `sh submit.sh`.
+After that, you will get md_input_files. For submitting MD, to enter and execute `sh submit_md.sh`.

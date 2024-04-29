@@ -20,7 +20,7 @@ def copy_files_in_directory(directory, destination_folder):
             copy_files(current_folder, destination_folder)
     # Create submit script outside the loop
     create_submit_script(destination_folder)
-    print(f"Folder {destination_folder} with scripts and necessary files created. Run 'cd {destination_folder}' and 'sh submit.sh' to start the simulations. If you want to do more than one replica, copy {destination_folder} before running any simulation.")
+    print(f"Folder {destination_folder} with scripts and necessary files created. Run 'cd {destination_folder}' and 'sh submit_md.sh' to start the simulations. If you want to do more than one replica, copy {destination_folder} before running any simulation.")
 
 
 def copy_files(folder, destination_folder):
@@ -59,20 +59,19 @@ def copy_files(folder, destination_folder):
     else:
         return False
 
-def create_submit_script(destination_folder):
-    """Create the submit.sh script to submit the MD simulations."""
+def create_submit_script(destination_folder): # Eliminated cd "$1" from the for loop (not necessary for the current implementation)
+    """Create the submit_md.sh script to submit the MD simulations."""
     submit_script_content = """#!/bin/bash
 
 start_dir=$(pwd)
 
-cd "$1"
 for dir in */ ; do
     cd "$dir"
     sbatch run_md.sh
     cd "$start_dir/$1"
 done
 """
-    submit_script_path = os.path.join(destination_folder, "submit.sh")
+    submit_script_path = os.path.join(destination_folder, "submit_md.sh")
     with open(submit_script_path, "w") as submit_script_file:
         submit_script_file.write(submit_script_content)
 

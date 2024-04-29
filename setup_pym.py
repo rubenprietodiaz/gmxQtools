@@ -99,8 +99,8 @@ os.makedirs('inputFiles', exist_ok=True)
 os.system('mv *.pdb inputFiles/')
 print("Created backup of input files in inputFiles/.")
 
-# Create submit.sh to submit jobs in all directories
-with open('submit.sh', 'w') as f_submit:
+# Create submit_pym.sh to submit jobs in all directories
+with open('submit_pym.sh', 'w') as f_submit:
     f_submit.write("#!/bin/bash\n\n")
     f_submit.write("echo 'Processing directories:'\n")
     f_submit.write("start_dir=$(pwd)\n")
@@ -113,5 +113,5 @@ with open('submit.sh', 'w') as f_submit:
     f_submit.write("done\n")
     f_submit.write("echo 'All jobs submitted.'\n")
 
-print("submit.sh created successfully.")
-print("All processes complete. Pymemdyn execution ready, run 'sh submit.sh' to start.")
+print("submit_pym.sh created successfully.")
+print("All processes complete. Pymemdyn execution ready, run 'sh submit_pym.sh' to start.")
