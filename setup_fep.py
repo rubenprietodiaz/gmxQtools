@@ -1,3 +1,5 @@
+## UNDER CONSTRUCTION ##
+
 import os
 import shutil
 import argparse
@@ -27,7 +29,7 @@ def copy_files_in_directory(directory, destination_folder):
 def copy_files(folder, destination_folder):
     """Copy the required files for MD simulations to the destination folder."""
     # Check the existence of each required file
-    if all(os.path.isfile(os.path.join(folder, file)) for file in ["prod.mdp", "topol.top", "index.ndx","topol.tpr"]) and os.path.exists(os.path.join(folder, "finalOutput", "confout.gro")):
+    if all(os.path.isfile(os.path.join(folder, file)) for file in ["prod.mdp", "topol.top", "index.ndx", "topol.tpr"]) and os.path.exists(os.path.join(folder, "finalOutput", "confout.gro")):
         # Extract the name of the current folder
         folder_name = os.path.basename(folder)
 
@@ -42,7 +44,7 @@ def copy_files(folder, destination_folder):
         # Check the existence of the finalOutput folder
         final_output_folder = os.path.join(folder, "finalOutput")
         if os.path.isdir(final_output_folder):
-            confout_gro = os.path.join(final_output_folder, "confout.gro")
+            confout_gro = os.path.join(final_output_folder, "final.gro")
             if os.path.isfile(confout_gro):
                 shutil.copy(confout_gro, destination_folder_path)
 

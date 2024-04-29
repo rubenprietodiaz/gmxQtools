@@ -8,10 +8,10 @@ def parse_arguments():
     parser.add_argument("-l", nargs='?', default="LIG", help="Ligand identifier (default: LIG).")
 
     # Parameters for Pymemdyn execution
-    parser.add_argument("--res", nargs='?', default="ca", help="Restraints (default: ca).")
+    parser.add_argument("-r", "--res", nargs='?', default="ca", help="Restraints. Options: bw (Ballesteros-Weinstein Restrained Relaxation), ca (C-Alpha Restrained Relaxation - default).")
     parser.add_argument("-w", nargs='?', default="HOH", help="Water identifiers (default: HOH).")
     parser.add_argument("-i", nargs='?', default="NA", help="Ion identifiers (default: NA).")
-    parser.add_argument("--full_relax", nargs='?', default="True", help="Full relaxation option (default: True). Choose False for no relaxation after constrained steps in pymemdyn.")
+    parser.add_argument("-fep", "--fep", action='store_true', help="Choose to prepare files for FEP calculations (add --full_relax false to pymemdyn script).")
     return parser.parse_args()
 
 # Parse arguments
@@ -62,28 +62,29 @@ for file in os.listdir('.'):
         
         # Create pymemdyn.sh script
         if args.cluster == "CSB":
-            pymemdyn_content = """#!/bin/bash -l
+            pymemdyn_content = f"""#!/bin/bash -l
 #SBATCH -N 1
 #SBATCH -n 32
 #SBATCH -t 24:00:00
 #SBATCH --gpus-per-task=1
 #SBATCH --job-name=pymemdyn
-pymemdyn -p complex.pdb --res {} -w {} -i {} -l LIG --full_relax {}""".format(args.res, args.w, args.i, args.full_relax)
+pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full_relax false' if args.fep else ''}\n"""
         elif args.cluster == "CESGA":
-            pymemdyn_content = """#!/bin/bash -l
+            pymemdyn_content = f"""#!/bin/bash -l
 #SBATCH -N 1
 #SBATCH -c 32
 #SBATCH --mem-per-cpu=4G
 #SBATCH -t 24:00:00
 #SBATCH --job-name=pymemdyn
-pymemdyn -p complex.pdb --res {} -w {} -i {} -l LIG --full_relax {}""".format(args.res, args.w, args.i, args.full_relax)
+pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full_relax false' if args.fep else ''}\n"""
         elif args.cluster == "TETRA":
-            pymemdyn_content = """#!/bin/bash -l
+            pymemdyn_content = f"""#!/bin/bash -l
 #SBATCH -N 1
 #SBATCH -n 32
 #SBATCH -t 24:00:00
 #SBATCH --job-name=pymemdyn
-pymemdyn -p complex.pdb --res {} -w {} -i {} -l LIG --full_relax {}""".format(args.res, args.w, args.i, args.full_relax)
+pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full_relax false' if args.fep else ''}\n"""
+
         
         with open('pymemdyn.sh', 'w') as f_pymemdyn:
             f_pymemdyn.write(pymemdyn_content)

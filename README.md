@@ -67,7 +67,7 @@ Execute 'setup_pym.py' in the directory containing all the files to create compl
    
         setup_pym [-C CLUSTER] [-p PROTEIN]
                   [-l LIGAND] [-w WATERS]
-                  [-i IONS] [--full_relax FULL_RELAX]
+                  [-i IONS] 
                   [--res RESTRAINT]
         
         -h, --help
@@ -100,13 +100,9 @@ Execute 'setup_pym.py' in the directory containing all the files to create compl
                     Restrained Relaxation - default),
                     ca (C-Alpha Restrained Relaxation)
 
-        --full_relax [True/False]
-                    Toggle for performing full MD relaxation.
-                    If set to false, the run will finish after
-                    the initial relaxation (default = True)
-                    Choose False for only performing FEP
-                    after PyMemDyn. Choose True for both
-                    FEP and MD input files generation
+        --fep 
+                    If selected, the run will finish after
+                    the initial relaxation.
 
    
 This creates a folder for each ligand, executes ligpargen for ligand parameters and generate scripts for pymemdyn execution (pymemdyn.sh inside ligand folder and submit.sh for        submitting to a cluster SLURM queue.
@@ -120,10 +116,8 @@ sh submit.sh
 
 Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
-### 3. Preparation of MD and FEP input files
-If you have selected `--full_relax True` (by default) in PyMemDyn setup, MD and FEP directories can be generated. If you have selected `--full_relax False` in PyMemDyn setup, only a directory for FEP can be generated.
-
-Execute `setup_sim.py`
+### 3. Preparation of MD
+For preparing the files for running an MD simulation, execute `setup_sim.py`.
 
 ```bash
         setup_sim [-C CLUSTER]
@@ -141,10 +135,6 @@ Execute `setup_sim.py`
 
         -rt RUNTIME (hours)
                     Limit of time for simulation (in hours)
-                    
-        -f COMPLEX
-                    Flag for preparation of FEP files.
-                    Put the directory of the complex to prepare FEP files. 
 ```
 
-After that, you will get two directories: md_input_files and fep_preparation_files. If you want to submit your new md_input_files, you only need to enter and execute `sh submit.sh`. For FEP files, you should download the generated structures and model all the ligands you want. Therefore, you can follow the protocol of [QligFEP](https://github.com/qusers/qligfep).
+After that, you will get md_input_files. For submitting MD, to enter and execute `sh submit.sh`.
