@@ -6,4 +6,4 @@ Necessary software:
 - PyModSim (https://github.com/GPCR-ModSim/pymodsim)
 - PyMemDyn (https://github.com/GPCR-ModSim/pymemdyn).
   - Ligpargen (https://github.com/Isra3l/ligpargen)
-  - Biopython (pip install biopython)
+  - Biopython: `pip install biopython`
