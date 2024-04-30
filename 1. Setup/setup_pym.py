@@ -54,6 +54,12 @@ for file in os.listdir('.'):
         
         # Execute ligpargen
         os.system('ligpargen -i LIG.pdb -cb 0 -ob 3 -r LIG -n LIG')
+
+        # It seems to be some problems with ligpargen and charged ligands. Check this.
+        # If one ligand is charged, the ligpargen will not generate the LIG.gmx.itp file, 
+        # and the script will fail. Correct this, if one ligand is not able to run ligpargen,
+        # continue with the next ligand and print a warning message (and a log file named
+        # ligpargen_errors.log).
         
         # Rename files
         os.rename('LIG.gmx.gro', 'LIG.gro')
