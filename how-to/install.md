@@ -7,3 +7,4 @@ Necessary software:
 - PyMemDyn (https://github.com/GPCR-ModSim/pymemdyn).
   - Ligpargen (https://github.com/Isra3l/ligpargen)
   - Biopython: `pip install biopython`
+- Q6 (https://github.com/esguerra/Q6)
