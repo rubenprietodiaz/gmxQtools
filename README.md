@@ -157,9 +157,12 @@ For preparing files for FEP, execute `setup_fep.py` inside your directory (conta
 ```
 
 After that, you will get fep_preparation_files: 
+    
     - **system.pdb**: Trimmed system containing membrane, water, and protein for FEP, with solvent removal and changes in nomenclature.
     - **ligand.pdb**: Template for model different ligands for FEP.
+    
 If using --noclean argument:
+
     - **complex.pdb**: PDB file of the unprepared system.
     - **water.pdb**: Extracted waters unprepared.
     - **water_fixed.pdb**: Renumbered waters.
