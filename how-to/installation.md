@@ -1,4 +1,4 @@
-Necessary dependencies:
+**Necessary dependencies:**
 - Numpy
 
 Necessary software:
