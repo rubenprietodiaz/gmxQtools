@@ -101,7 +101,7 @@ sh submit_pym.sh
 
 Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit_pym.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
-## 3. Preparation of MD
+## 3. Setup MD
 For preparing the files for running an MD simulation, execute `setup_md.py` inside your directory (containing subdirectories for each ligand) after running pymemdyn.
 
 ```bash
@@ -124,7 +124,7 @@ For preparing the files for running an MD simulation, execute `setup_md.py` insi
 
 After that, you will get md_input_files. For submitting MD, to enter and execute `sh submit_md.sh`.
 
-## 4. Preparation of FEP
+## 4. Setup FEP
 For preparing files for FEP, execute `setup_fep.py` inside your directory (containing subdirectories for each ligand) after running pymemdyn.
 
 ```bash
