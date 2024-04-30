@@ -27,6 +27,7 @@ def copy_files(folder, destination_folder):
     """Copy the required files for MD simulations to the destination folder."""
     # Check the existence of each required file
     if all(os.path.isfile(os.path.join(folder, file)) for file in ["prod.mdp", "topol.top", "index.ndx", "topol.tpr"]) and os.path.exists(os.path.join(folder, "finalOutput", "confout.gro")):
+        print("All the required files are present in the folder.")
         # Extract the name of the current folder
         folder_name = os.path.basename(folder)
 
@@ -41,7 +42,7 @@ def copy_files(folder, destination_folder):
         # Check the existence of the finalOutput folder
         final_output_folder = os.path.join(folder, "finalOutput")
         if os.path.isdir(final_output_folder):
-            confout_gro = os.path.join(final_output_folder, "final.gro")
+            confout_gro = os.path.join(final_output_folder, "confout.gro")
             if os.path.isfile(confout_gro):
                 shutil.copy(confout_gro, destination_folder_path)
 
@@ -49,6 +50,8 @@ def copy_files(folder, destination_folder):
         for itp_file in os.listdir(folder):
             if itp_file.endswith(".itp"):
                 shutil.copy(os.path.join(folder, itp_file), destination_folder_path)
+        
+        print(f"Files copied to {destination_folder_path}.")
 
         # Create the run_md.sh script inside the destination folder
         create_run_md_script(destination_folder_path)

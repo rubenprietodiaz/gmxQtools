@@ -117,7 +117,7 @@ sh submit_pym.sh
 Check the original repository [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for requirements, installation and tutorials. The necessary arguments were included in submit_pym.sh script in step 1.2.6, but you can modify pymemdyn.sh inside each folder with your preferences, or the generation of this script in `pym_setup.py`.
 
 ### 3. Preparation of MD
-For preparing the files for running an MD simulation, execute `setup_md.py`.
+For preparing the files for running an MD simulation, execute `setup_md.py` inside your directory (containing subdirectories for each ligand) after running pymemdyn.
 
 ```bash
         setup_md  [-C CLUSTER] [-t TIME]
@@ -138,3 +138,34 @@ For preparing the files for running an MD simulation, execute `setup_md.py`.
 ```
 
 After that, you will get md_input_files. For submitting MD, to enter and execute `sh submit_md.sh`.
+
+### 4. Preparation of FEP
+For preparing files for FEP, execute `setup_fep.py` inside your directory (containing subdirectories for each ligand) after running pymemdyn.
+
+```bash
+        setup_fep [-d DIR] [-nc]
+        
+        -h, --help
+                    show help message
+
+        -d CLUSTER
+                    Choose your directory for creating FEP
+                    files.
+
+        -nc, --noclean
+                    Keep temporary files and log in the output.
+```
+
+After that, you will get fep_preparation_files: 
+    - **system.pdb**: Trimmed system containing membrane, water, and protein for FEP, with solvent removal and changes in nomenclature.
+    - **ligand.pdb**: Template for model different ligands for FEP.
+If using --noclean argument:
+    - **complex.pdb**: PDB file of the unprepared system.
+    - **water.pdb**: Extracted waters unprepared.
+    - **water_fixed.pdb**: Renumbered waters.
+    - **pymol.log**: Log of pymol transformations.
+    - **system.pdb.bak**: Backup of system.pdb before renaming residues for Q.
+    - **trjconv.log**: Output of gmx trjconv script to convert *.gro to *.pdb.
+
+
+
