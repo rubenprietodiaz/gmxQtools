@@ -148,7 +148,7 @@ For preparing files for FEP, execute `setup_fep.py` inside your directory (conta
         -h, --help
                     show help message
 
-        -d CLUSTER
+        -d DIR
                     Choose your directory for creating FEP
                     files.
 
