@@ -134,7 +134,7 @@ def modify_simulation_time(destination_folder):
     with open(prod_mdp_path, "r") as prod_mdp_file:
         lines = prod_mdp_file.readlines()
 
-    with open(prod_mdp_path, "w") as prod_mdp_file:
+    with open(prod_mdp_path, "w") as prod_mdp_file: # Add a function to change gen_seed (if the runs start at the same time, they will have the same seed)
         for line in lines:
             if line.strip().startswith("nsteps"):
                 prod_mdp_file.write(f"nsteps              =  {nsteps}   ; total {simulation_time_ns} ns\n")
