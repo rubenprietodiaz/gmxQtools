@@ -124,7 +124,7 @@ For preparing the files for running an MD simulation, execute `setup_md.py` insi
 
 After that, you will get md_input_files. For submitting MD, to enter and execute `sh submit_md.sh`.
 
-## 4. Setup FEP
+## 4. Setup FEP !! NOT WORKING PROPERLY !!
 For preparing files for FEP, execute `setup_fep.py` inside your directory (containing subdirectories for each ligand) after running pymemdyn.
 
 ```bash
