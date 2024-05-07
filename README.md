@@ -8,5 +8,5 @@ For detailed instructions on how to use gmxQtools, please check the `/how-to` se
 ## :construction: Disclaimer
 This repository, gmxQTools, is currently under construction and is continuously evolving. We are dedicated to improving and expanding the functionalities of our tools and scripts regularly. Please be aware that some features may be incomplete or may change in future updates.
 
-## Bug Reporting and Contributions:
+## Bug Reporting and Contributions
 If you encounter any issues or bugs while using these tools, please report them to ruben.prieto@usc.es. We welcome contributions and suggestions that can help improve this project.
