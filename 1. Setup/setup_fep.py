@@ -116,15 +116,15 @@ def write_pdb(water_molecules, output_file):
             o_atom, h1_atom, h2_atom = water
 
             # Write oxygen atom
-            file.write(f"ATOM  {atom_id:>5}  OW  HOH A{res_id:>4}    {o_atom[1][0]:>8.3f}{o_atom[1][1]:>8.3f}{o_atom[1][2]:>8.3f}  1.00  0.00           O\n")
+            file.write(f"ATOM  {atom_id:>5}  OW  HOH W{res_id:>4}    {o_atom[1][0]:>8.3f}{o_atom[1][1]:>8.3f}{o_atom[1][2]:>8.3f}  1.00  0.00           O\n")
             atom_id += 1
 
             # Write first hydrogen atom
-            file.write(f"ATOM  {atom_id:>5} 1H   HOH A{res_id:>4}    {h1_atom[1][0]:>8.3f}{h1_atom[1][1]:>8.3f}{h1_atom[1][2]:>8.3f}  1.00  0.00           H\n")
+            file.write(f"ATOM  {atom_id:>5} 1H   HOH W{res_id:>4}    {h1_atom[1][0]:>8.3f}{h1_atom[1][1]:>8.3f}{h1_atom[1][2]:>8.3f}  1.00  0.00           H\n")
             atom_id += 1
 
             # Write second hydrogen atom
-            file.write(f"ATOM  {atom_id:>5} 2H   HOH A{res_id:>4}    {h2_atom[1][0]:>8.3f}{h2_atom[1][1]:>8.3f}{h2_atom[1][2]:>8.3f}  1.00  0.00           H\n")
+            file.write(f"ATOM  {atom_id:>5} 2H   HOH W{res_id:>4}    {h2_atom[1][0]:>8.3f}{h2_atom[1][1]:>8.3f}{h2_atom[1][2]:>8.3f}  1.00  0.00           H\n")
             atom_id += 1
 
             res_id += 1
