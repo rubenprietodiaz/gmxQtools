@@ -5,21 +5,21 @@ All the scripts and the pipeline are optimized for batch processing of MD simula
 
 ## Directory Structure
 
-### 1. `setup`
+### 1.setup
 The `setup` directory contains essential files and scripts to initialize and configure systems for molecular dynamics (MD) and free energy perturbation (FEP) simulations using the `pymemdyn` package. This includes:
 
 - Configuration files for MD and FEP simulations.
 - Initialization scripts to set up the simulation environment.
 - Parameter and topology files needed for the simulations.
 
-### 2. `analysis`
+### 2.analysis
 The `analysis` directory is dedicated to tools and scripts for analyzing the results of MD and FEP simulations. This includes:
 
 - Python scripts for processing and visualizing simulation data.
 - Tools to calculate various properties from the simulation outputs.
 - Templates and other files.
 
-### 3. `developer`
+### 3.developer
 The `developer` directory contains unstable versions and experimental features. This area is for development purposes and may include:
 
 - Beta versions of scripts and tools.
