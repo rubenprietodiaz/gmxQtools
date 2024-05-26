@@ -1,3 +1,29 @@
+# Directory Structure
+
+## 1.setup
+The `setup` directory contains essential files and scripts to initialize and configure systems for molecular dynamics (MD) and free energy perturbation (FEP) simulations using the `pymemdyn` package. This includes:
+
+- Configuration files for MD and FEP simulations.
+- Initialization scripts to set up the simulation environment.
+- Parameter and topology files needed for the simulations.
+
+## 2.analysis
+The `analysis` directory is dedicated to tools and scripts for analyzing the results of MD and FEP simulations. This includes:
+
+- Python scripts for processing and visualizing simulation data.
+- Tools to calculate various properties from the simulation outputs.
+- Templates and other files.
+
+## 3.developer
+The `developer` directory contains unstable versions and experimental features. This area is for development purposes and may include:
+
+- Beta versions of scripts and tools.
+- Experimental features under development.
+- Testing scripts and temporary files.
+
+Use these files with caution, as they may not be fully tested or stable.
+
+
 # GPCR Work Pipeline
 
 This pipeline outlines the workflow for working with G Protein-Coupled Receptors (GPCRs). All steps described below have been tested using Schrödinger software (Maestro) for file preparation (protprep, ligprep), and docking.
