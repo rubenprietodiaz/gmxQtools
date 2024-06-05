@@ -4,7 +4,8 @@ import shutil
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Process ligand and protein for PyMemDyn execution.")
-    parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="TETRA", help="Choose the cluster (default: TETRA).")
+    parser.add_argument("--noclean", action='store_true', help="Do not clean the directory after processing.")
+    parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="CSB", help="Choose the cluster (default: CSB).") # Changed to CSB for testing
     parser.add_argument("-p", "--protein", nargs='?', default="protein.pdb", help="Protein file name (default: protein.pdb).")
     parser.add_argument("-l", nargs='?', default="LIG", help="Ligand identifier (default: LIG).")
 
@@ -15,30 +16,29 @@ def parse_arguments():
     parser.add_argument("-fep", "--fep", action='store_true', help="Choose to prepare files for FEP calculations (add --full_relax false to pymemdyn script).")
     return parser.parse_args()
 
-# Parse arguments
 args = parse_arguments()
-
-# Save the current directory
 start_dir = os.getcwd()
+if args.fep:
+    print('You have chosen to prepare files for FEP calculations. This is faster, but you will need to run the full relaxation manually if want to run MD.')
+if args.noclean:
+    print('You have chosen to not clean the directory after processing')
+if args.cluster:
+    print(f'You have chosen the {args.cluster} cluster for execution. Please, make sure the options are correct.')
 
 # Loop through all .pdb files in the current directory, excluding the protein file
 for file in os.listdir('.'):
     if file.endswith('.pdb') and file != args.protein:
         print("Processing:", file)
 
-        # Read the content of the file
+        # Read the content of the file, remove unnecessary lines and replace UNK with LIG
         with open(file, 'r') as f:
             content = f.readlines()
-
-        # Remove unnecessary lines and replace UNK with LIG
         content = [line for line in content if not line.startswith(('END', 'CONECT', 'REMARK', 'TITLE'))]
         content = [line.replace(args.l, 'LIG') for line in content]
 
-        # Create a directory named after the ligand file (without the .pdb extension)
+        # Create a directory named after the ligand file (without the .pdb extension) and write the modified ligand file named as LIG.pdb
         dir_name = os.path.splitext(file)[0]
         os.makedirs(dir_name, exist_ok=True)
-
-        # Write the modified ligand file to the new directory and rename it to LIG.pdb
         ligand_path = os.path.join(dir_name, 'LIG.pdb')
         with open(ligand_path, 'w') as f:
             f.writelines(content)
@@ -50,33 +50,47 @@ for file in os.listdir('.'):
             f_complex.write(f_protein.read())
             f_complex.write(f_ligand.read())
 
-        # Change into the ligand's directory
+        # Enter the directory
         os.chdir(dir_name)
 
-        # Execute ligpargen
-        os.system('ligpargen -i LIG.pdb -cb 0 -ob 3 -r LIG -n LIG')
-
-        # Rename files
+        # Execute ligpargen and rename files
+        print(f"[1/3] Running LigParGen for {dir_name}")
+        os.system(f'ligpargen -i LIG.pdb -cb 0 -ob 3 -r LIG -n LIG > ligpargen.log 2>&1')
         os.rename('LIG.gmx.gro', 'LIG.gro')
         os.rename('LIG.openmm.pdb', 'LIG.pdb')
         os.rename('LIG.gmx.itp', 'LIG.itp')
 
-        # Execute pymodsim and process generated files
-        os.system('pymodsim -n 3 -p complex.pdb')
-        if os.path.exists('homology.pdb'):
-            os.replace('homology.pdb', 'complex.pdb')
+        # Execute pymodsim for alignment of complex.pdb and clean files
+        print(f"[2/3] Running PyModSim for {dir_name}")
+        os.system('pymodsim -n 3 -p complex.pdb > pymodsim.log 2>&1')
+        if os.path.exists('finalOutput/complex.pdb'):
+            os.rename('complex.pdb', 'complex.pdb.bak') # Backup the original complex.pdb
+            shutil.copy('finalOutput/complex.pdb', 'complex.pdb')
+            
+            # Remove files from pymodsim
+            if args.noclean is False:
+                files_to_delete = [
+                    'pymodsim.log',
+                    'Model_output.tgz',
+                    'protein_stripped.pdb',
+                    '2membranes.inp',
+                    'datapar2',
+                    'protein_strippedout.pdb',
+                    'fort.41',
+                    'fort.4',
+                    'datapar1',
+                    'datasub1',
+                    'protein_aligned.pdb',
+                    'homology.pdb'
+                ]
+                for file in files_to_delete:
+                    if os.path.exists(file):
+                        os.remove(file)
+                os.system('rm -rf finalOutput/')       
         else:
-            print("Warning: homology.pdb not found, skipping replacement of complex.pdb")
+            print("Warning: PyModSim alignment didn't work, check manually the complex.pdb file.")
 
-        # Remove all files and folders except complex.pdb !! ERROR: This will remove everything in the directory, just keeping complex.pdb
-        # for generated_item in os.listdir('.'):
-        #     if generated_item != 'complex.pdb':
-        #         if os.path.isfile(generated_item):
-        #             os.remove(generated_item)
-        #         elif os.path.isdir(generated_item):
-        #             shutil.rmtree(generated_item)
-
-        # Create pymemdyn.sh script
+        # pymemdyn.sh script inside the directory
         if args.cluster == "CSB":
             pymemdyn_content = f"""#!/bin/bash -l
 #SBATCH -N 1
@@ -106,18 +120,16 @@ pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full
 
         with open('pymemdyn.sh', 'w') as f_pymemdyn:
             f_pymemdyn.write(pymemdyn_content)
-
-        # Return to the start directory
+        print(f"[3/3] pymemdyn.sh script ({args.cluster}) created for {dir_name}")
         os.chdir(start_dir)
 
-        print("Created complex.pdb, executed ligpargen, renamed files, executed pymodsim, replaced complex.pdb, and created pymemdyn.sh in", dir_name)
+        print(f"Processing of {dir_name} complete.")
 
-# Create directory for input files and move all *.pdb to that directory
+# Backup the provided PDB files
 os.makedirs('inputFiles', exist_ok=True)
 os.system('mv *.pdb inputFiles/')
-print("Created backup of input files in inputFiles/.")
 
-# Create submit_pym.sh to submit jobs in all directories
+# submit_pym.sh script
 with open('submit_pym.sh', 'w') as f_submit:
     f_submit.write("#!/bin/bash\n\n")
     f_submit.write("echo 'Processing directories:'\n")
@@ -130,6 +142,7 @@ with open('submit_pym.sh', 'w') as f_submit:
     f_submit.write("    fi\n")
     f_submit.write("done\n")
     f_submit.write("echo 'All jobs submitted.'\n")
-
-print("submit_pym.sh created successfully.")
-print("All processes complete. Pymemdyn execution ready, run 'sh submit_pym.sh' to start.")
+print(f'All ligands processed. Provided PDB files were moved to inputFiles directory.')
+print(f'Execute submit_pym.sh in {args.cluster} to start pymemdyn equilibration.')
+print(f'After running, you can use setup_md.py or setup_fep.py to prepare the files for MD or FEP calculations respectively.')
+print(f'Check gmxQtools repository for further information.')
