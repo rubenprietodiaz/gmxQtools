@@ -68,13 +68,13 @@ for file in os.listdir('.'):
         else:
             print("Warning: homology.pdb not found, skipping replacement of complex.pdb")
 
-        # Remove all files and folders except complex.pdb
-        for generated_item in os.listdir('.'):
-            if generated_item != 'complex.pdb':
-                if os.path.isfile(generated_item):
-                    os.remove(generated_item)
-                elif os.path.isdir(generated_item):
-                    shutil.rmtree(generated_item)
+        # Remove all files and folders except complex.pdb !! ERROR: This will remove everything in the directory, just keeping complex.pdb
+        # for generated_item in os.listdir('.'):
+        #     if generated_item != 'complex.pdb':
+        #         if os.path.isfile(generated_item):
+        #             os.remove(generated_item)
+        #         elif os.path.isdir(generated_item):
+        #             shutil.rmtree(generated_item)
 
         # Create pymemdyn.sh script
         if args.cluster == "CSB":
