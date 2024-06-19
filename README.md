@@ -1,6 +1,6 @@
-# Molecular Dynamics and Free Energy Perturbation Setup Scripts
+# MD and FEP setup
 
-This repository contains scripts to set up molecular dynamics (MD, GROMACS) and free energy perturbation (FEP, Q) simulations for GPCRs. The provided scripts streamline the preparation process for these simulations, making it easier to configure and execute them using the `pymemdyn` package.
+This repository contains scripts for setting up molecular dynamics (MD) simulations using GROMACS and free energy perturbation (FEP) simulations using Q for ligand-GPCR complexes. The provided scripts simplify the preparation process for these simulations, making it easier to configure and execute them using the pymemdyn package. Additionally, these scripts allow you to prepare multiple ligands simultaneously.
 
 ## Prerequisites
 
