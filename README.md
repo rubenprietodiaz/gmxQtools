@@ -117,7 +117,7 @@ Under construction.
 
 5. **Prepare FEP Simulation** (if needed):
     - Run `setup_fep.py` to prepare FEP files.
-    - This will create the directory fep_preparation_files that you can use for modelling novel ligands and running QligFEP protocol.
+    - This will create the directory fep_preparation_files that you can use for modelling novel ligands and running [QligFEP](https://github.com/qusers/qligfep) protocol.
 
 ## License
 
