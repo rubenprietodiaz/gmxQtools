@@ -85,7 +85,7 @@ Under construction.
 
 ## Example GPCR Workflow
 <p align="center">
-  <img src="manual/protocol.jpg" alt="Protocol" />
+  <img src="/manual/Protocol.jpg" alt="Protocol" />
 </p>
 1. **Prepare Protein and Ligand**:
     - Use Schrödinger Maestro to prepare protein and ligand structures.
