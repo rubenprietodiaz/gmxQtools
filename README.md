@@ -100,7 +100,7 @@ Under construction.
         - A script (`pymemdyn.sh`) to execute PyMemDyn within each ligand's subdirectory.
         - A submission script (`submit_pym.sh`) to submit the PyMemDyn jobs to a cluster SLURM queue (by calling to `pymemdyn.sh`.).
 
-    Please, note that PyModSim execution is included in setup_pym protocol, through: `pymodsim -n 3 -p [PDB]`, which means **no corrections** in the structure of the PDB file. Check [Pymodsim](https://github.com/GPCR-ModSim/pymodsim) for more info. If you want to perform some corrections, after preparing the protein in Maestro, run PyModSim manually and continue the protocol with `old_setup_pym.py`located in developing directory.
+    Please, note that PyModSim execution is included in setup_pym protocol, through: `pymodsim -n 3 -p [PDB]`, which means **no corrections** in the structure of the PDB file. Check [Pymodsim](https://github.com/GPCR-ModSim/pymodsim) for more info. If you want to perform some corrections, after preparing the protein in Maestro, run PyModSim manually and continue the protocol with `old_setup_pym.py` located in developing directory.
 
 3. **Submit PyMemDyn Jobs**:
     - Execute `sh submit_pym.sh` to submit PyMemDyn jobs to your cluster.
