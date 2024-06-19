@@ -65,7 +65,7 @@ setup_fep [-d DIR] [-nc]
 ```
 
 - **-h, --help**: Show help message
-- **-d DIR**: Choose your directory for creating FEP files
+- **-d DIR**: Choose your directory for creating FEP files, taking this ligand as a model.
 - **-nc, --noclean**: Keep temporary files and log in the output
 
 After execution, the script generates `fep_preparation_files`:
@@ -84,7 +84,9 @@ If using the `--noclean` argument:
 Under construction.
 
 ## Example GPCR Workflow
-
+<p align="center">
+  <img src="manual/protocol.jpg" alt="Protocol" />
+</p>
 1. **Prepare Protein and Ligand**:
     - Use Schrödinger Maestro to prepare protein and ligand structures.
     - Export prepared protein as `protein.pdb` and ligands as PDB files with residue name 'UNK'. 
@@ -112,7 +114,8 @@ Under construction.
     - Analyze data with analysis scripts provided.
 
 5. **Prepare FEP Simulation** (if needed):
-    - Run `setup_fep.py` to prepare FEP files. [UNDER CONSTRUCTION]
+    - Run `setup_fep.py` to prepare FEP files.
+    - This will create the directory fep_preparation_files that you can use for modelling novel ligands and running QligFEP protocol.
 
 ## License
 
