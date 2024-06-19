@@ -8,6 +8,7 @@ def parse_arguments():
     parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="TETRA", help="Choose the cluster (default: TETRA).") # Changed to CSB for testing
     parser.add_argument("-p", "--protein", nargs='?', default="protein.pdb", help="Protein file name (default: protein.pdb).")
     parser.add_argument("-l", nargs='?', default="LIG", help="Ligand identifier (default: LIG).")
+    parser.add_argument("-na", "--noalign", action='store_true', help="Do not align the protein and ligand. Use this option if the complex is already aligned with PyModSim.")
 
     # Parameters for Pymemdyn execution
     parser.add_argument("-r", "--res", nargs='?', default="ca", help="Restraints. Options: bw (Ballesteros-Weinstein Restrained Relaxation), ca (C-Alpha Restrained Relaxation - default).")
@@ -24,7 +25,8 @@ if args.noclean:
     print('You have chosen to not clean the directory after processing')
 if args.cluster:
     print(f'You have chosen the {args.cluster} cluster for execution. Please, make sure the options are correct.')
-
+if args.noalign:
+    print(f'You have chosen to avoid PyModSim alignment. Be sure the complex is already aligned.')
 # Loop through all .pdb files in the current directory, excluding the protein file
 for file in os.listdir('.'):
     if file.endswith('.pdb') and file != args.protein:
@@ -60,36 +62,38 @@ for file in os.listdir('.'):
         os.rename('LIG.openmm.pdb', 'LIG.pdb')
         os.rename('LIG.gmx.itp', 'LIG.itp')
 
-        # Execute pymodsim for alignment of complex.pdb and clean files
-        print(f"[2/3] Running PyModSim for {dir_name}")
-        os.system('pymodsim -n 3 -p complex.pdb > pymodsim.log 2>&1')
-        if os.path.exists('finalOutput/complex.pdb'):
-            os.rename('complex.pdb', 'complex.pdb.bak') # Backup the original complex.pdb
-            shutil.copy('finalOutput/complex.pdb', 'complex.pdb')
-            
-            # Remove files from pymodsim
-            if args.noclean is False:
-                files_to_delete = [
-                    'pymodsim.log',
-                    'Model_output.tgz',
-                    'protein_stripped.pdb',
-                    '2membranes.inp',
-                    'datapar2',
-                    'protein_strippedout.pdb',
-                    'fort.41',
-                    'fort.4',
-                    'datapar1',
-                    'datasub1',
-                    'protein_aligned.pdb',
-                    'homology.pdb'
-                ]
-                for file in files_to_delete:
-                    if os.path.exists(file):
-                        os.remove(file)
-                os.system('rm -rf finalOutput/')       
+        if args.noalign is False:
+            # Execute pymodsim for alignment of complex.pdb and clean files
+            print(f"[2/3] Running PyModSim for {dir_name}")
+            os.system('pymodsim -n 3 -p complex.pdb > pymodsim.log 2>&1')
+            if os.path.exists('finalOutput/complex.pdb'):
+                os.rename('complex.pdb', 'complex.pdb.bak') # Backup the original complex.pdb
+                shutil.copy('finalOutput/complex.pdb', 'complex.pdb')
+                
+                # Remove files from pymodsim
+                if args.noclean is False:
+                    files_to_delete = [
+                        'pymodsim.log',
+                        'Model_output.tgz',
+                        'protein_stripped.pdb',
+                        '2membranes.inp',
+                        'datapar2',
+                        'protein_strippedout.pdb',
+                        'fort.41',
+                        'fort.4',
+                        'datapar1',
+                        'datasub1',
+                        'protein_aligned.pdb',
+                        'homology.pdb'
+                    ]
+                    for file in files_to_delete:
+                        if os.path.exists(file):
+                            os.remove(file)
+                    os.system('rm -rf finalOutput/')       
+            else:
+                print("Warning: PyModSim alignment didn't work, check manually the complex.pdb file.")
         else:
-            print("Warning: PyModSim alignment didn't work, check manually the complex.pdb file.")
-
+            print(f"[2/3] Skipping alignment for {dir_name}.")
         # pymemdyn.sh script inside the directory
         if args.cluster == "CSB":
             pymemdyn_content = f"""#!/bin/bash -l
