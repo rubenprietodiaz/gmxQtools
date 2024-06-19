@@ -121,6 +121,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgments
 
 - [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for providing the tools for membrane molecular dynamics calculations.
+- [PyModSim](https://github.com/GPCR-ModSim/pymodsim) for providing the tools for membrane alignment.
 - [Ligpargen](https://github.com/Isra3l/ligpargen) for ligand parameter generation.
 
 For any issues or contributions, please open a ticket or submit a pull request on the project's GitHub page.
