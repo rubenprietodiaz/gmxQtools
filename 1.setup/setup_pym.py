@@ -5,7 +5,7 @@ import shutil
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Process ligand and protein for PyMemDyn execution.")
     parser.add_argument("--noclean", action='store_true', help="Do not clean the directory after processing.")
-    parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="CSB", help="Choose the cluster (default: CSB).") # Changed to CSB for testing
+    parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="TETRA", help="Choose the cluster (default: TETRA).") # Changed to CSB for testing
     parser.add_argument("-p", "--protein", nargs='?', default="protein.pdb", help="Protein file name (default: protein.pdb).")
     parser.add_argument("-l", nargs='?', default="LIG", help="Ligand identifier (default: LIG).")
 

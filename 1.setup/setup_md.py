@@ -46,23 +46,23 @@ def copy_files(folder, destination_folder):
             if os.path.isfile(confout_gro):
                 shutil.copy(confout_gro, destination_folder_path)
 
-        # Copy .itp files if they exist
+        # Copy .itp files
         for itp_file in os.listdir(folder):
             if itp_file.endswith(".itp"):
                 shutil.copy(os.path.join(folder, itp_file), destination_folder_path)
         
         print(f"Files copied to {destination_folder_path}.")
 
-        # Create the run_md.sh script inside the destination folder
+        # Create the run_md.sh script inside each destination folder
         create_run_md_script(destination_folder_path)
 
-        # Modify prod.mdp if simulation time is provided
+        # Modify prod.mdp if simulation time is provided, if not, prod.mdp will be used as is (10 ns)
         if args.simulation_time:
             modify_simulation_time(destination_folder_path)
     else:
         return False
 
-def create_submit_script(destination_folder): # Eliminated cd "$1" from the for loop (not necessary for the current implementation)
+def create_submit_script(destination_folder):
     """Create the submit_md.sh script to submit the MD simulations."""
     submit_script_content = """#!/bin/bash
 
@@ -122,7 +122,7 @@ srun gmx mdrun -s topol_prod.tpr -o traj.trr -e ener.edr -c final.gro -g product
     with open(run_md_script_path, "w") as run_md_script_file:
         run_md_script_file.write(run_md_script_content)
 
-    # Change permissions to make the script executable
+    # Make the script executable
     os.chmod(run_md_script_path, 0o755)
 
 def modify_simulation_time(destination_folder):
@@ -134,7 +134,7 @@ def modify_simulation_time(destination_folder):
     with open(prod_mdp_path, "r") as prod_mdp_file:
         lines = prod_mdp_file.readlines()
 
-    with open(prod_mdp_path, "w") as prod_mdp_file: # Add a function to change gen_seed (if the runs start at the same time, they will have the same seed)
+    with open(prod_mdp_path, "w") as prod_mdp_file: # Add a function to change gen_seed (if the runs start at exactly the same time, they will have the same seed)
         for line in lines:
             if line.strip().startswith("nsteps"):
                 prod_mdp_file.write(f"nsteps              =  {nsteps}   ; total {simulation_time_ns} ns\n")

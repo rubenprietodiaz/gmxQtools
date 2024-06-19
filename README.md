@@ -33,7 +33,7 @@ setup_pym [-C CLUSTER] [-p PROTEIN]
 - **-l LIGAND**: Ligand identifiers in pdb (default = UNK, from Maestro)
 - **-w WATERS**: Water identifiers of crystallized water molecules in the PDB file
 - **-i IONS**: Ion identifiers of crystallized ions in the PDB file
-- **--res [RESTRAINT]**: Position restraints during MD production run. Options: bw (Ballesteros-Weinstein Restrained Relaxation - default), ca (C-Alpha Restrained Relaxation)
+- **--res RESTRAINT**: Position restraints during MD production run. Options: bw (Ballesteros-Weinstein Restrained Relaxation - default), ca (C-Alpha Restrained Relaxation)
 - **--fep**: If selected, the run will finish after the initial relaxation. Choose this option if you know you only want to perform FEP simulations.
 
 After execution, this script creates a folder for each ligand, executes Ligpargen for ligand parameters, and generates scripts for PyMemDyn execution (`pymemdyn.sh` inside the ligand folder and `submit_pym.sh` for submitting to a cluster SLURM queue).
