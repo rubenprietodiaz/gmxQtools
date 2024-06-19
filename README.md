@@ -87,6 +87,7 @@ Under construction.
 <p align="center">
   <img src="/manual/Protocol.jpg" alt="Protocol" />
 </p>
+
 1. **Prepare Protein and Ligand**:
     - Use Schrödinger Maestro to prepare protein and ligand structures.
     - Export prepared protein as `protein.pdb` and ligands as PDB files with residue name 'UNK'. 
