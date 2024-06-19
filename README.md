@@ -1,26 +1,125 @@
-# gmxQTools
-This repository provides tools and scripts for working with molecular dynamics (MD) simulations using GROMACS (e.g., PyMemDyn), as well as for performing simulations with Q (e.g., QligFEP) on the same molecular system. It includes tools for system preparation, simulation execution, results analysis, and more.
+# Molecular Dynamics and Free Energy Perturbation Setup Scripts
 
-All the scripts and the pipeline are optimized for batch processing of MD simulations, handling numerous ligands, folders, and proteins.
+This repository contains scripts to set up molecular dynamics (MD, GROMACS) and free energy perturbation (FEP, Q) simulations for GPCRs. The provided scripts streamline the preparation process for these simulations, making it easier to configure and execute them using the `pymemdyn` package.
 
-# Setup Instructions
+## Prerequisites
 
-## Necessary dependencies
+Before using these scripts, ensure you have the following software installed:
+- Python (3.7 or higher): highly recommended to create a conda environment named py37.
+- `pymemdyn` package: install through GitHub
+- `Ligpargen` package: install through GitHub
+- Schrödinger Maestro (for protein and ligand preparation)
+- GROMACS (for MD simulations)
+All the required versions are included in ´requirements.txt´.
 
-### Python Packages (requirements.txt)
-- Numpy: `pip install numpy`
-- Biopython: `pip install biopython`
+## Setup Scripts Overview
 
-### Necessary Software
-- **GROMACS** (tested on gmx 2020 MPI and 2021): Install from [GROMACS official site](http://www.gromacs.org/)
-- **PyModSim**: Clone and install from [PyModSim GitHub](https://github.com/GPCR-ModSim/pymodsim)
-- **PyMemDyn**: Clone and install from [PyMemDyn GitHub](https://github.com/GPCR-ModSim/pymemdyn)
-  - **Ligpargen**: Clone and install from [Ligpargen GitHub](https://github.com/Isra3l/ligpargen)
-- **Q6**: Clone and install from [Q6 GitHub](https://github.com/esguerra/Q6)
+### 1. `setup_pym.py`
+This script prepares the system for PyMemDyn simulations. It creates complexes between ligand and receptor, aligns the protein, generates ligand parameters using Ligpargen, and renames the files properly for PyMemDyn.
 
-## :construction: Disclaimer
-This repository, gmxQTools, is currently under construction and is continuously evolving. We are dedicated to improving and expanding the functionalities of our tools and scripts regularly. Please be aware that some features may be incomplete or may change in future updates.
+#### Usage
 
-## Bug Reporting and Contributions
-If you encounter any issues or bugs while using these tools, please report them to ruben.prieto@usc.es. We welcome contributions and suggestions that can help improve this project.
+```bash
+setup_pym [-C CLUSTER] [-p PROTEIN]
+          [-l LIGAND] [-w WATERS]
+          [-i IONS] 
+          [--res RESTRAINT]
+```
 
+- **-h, --help**: Show help message
+- **-C CLUSTER**: Choose your cluster from the list (modify code to add more clusters)
+- **-p PROTEIN**: PDB file of your protein (default = protein.pdb)
+- **-l LIGAND**: Ligand identifiers in pdb (default = UNK, from Maestro)
+- **-w WATERS**: Water identifiers of crystallized water molecules in the PDB file
+- **-i IONS**: Ion identifiers of crystallized ions in the PDB file
+- **--res [RESTRAINT]**: Position restraints during MD production run. Options: bw (Ballesteros-Weinstein Restrained Relaxation - default), ca (C-Alpha Restrained Relaxation)
+- **--fep**: If selected, the run will finish after the initial relaxation. Choose this option if you know you only want to perform FEP simulations.
+
+After execution, this script creates a folder for each ligand, executes Ligpargen for ligand parameters, and generates scripts for PyMemDyn execution (`pymemdyn.sh` inside the ligand folder and `submit_pym.sh` for submitting to a cluster SLURM queue).
+
+### 2. `setup_md.py`
+This script prepares the files for running an MD simulation. It should be executed inside your directory containing subdirectories for each ligand after running PyMemDyn.
+
+#### Usage
+
+```bash
+setup_md [-C CLUSTER] [-t TIME]
+         [-rt RUNTIME]
+```
+
+- **-h, --help**: Show help message
+- **-C CLUSTER**: Choose your cluster from the list (modify code to add more clusters)
+- **-t TIME (ns)**: Time for MD simulation (in nanoseconds)
+- **-rt RUNTIME (hours)**: Limit of time for simulation (in hours)
+
+After execution, the script generates `md_input_files`. To submit the MD job, enter the directory and execute `sh submit_md.sh`.
+
+### 3. `setup_fep.py`
+This script prepares files for FEP simulations. It should be executed inside your directory containing subdirectories for each ligand after running `setup_pym.py`.
+
+#### Usage
+
+```bash
+setup_fep [-d DIR] [-nc]
+```
+
+- **-h, --help**: Show help message
+- **-d DIR**: Choose your directory for creating FEP files
+- **-nc, --noclean**: Keep temporary files and log in the output
+
+After execution, the script generates `fep_preparation_files`:
+- **system.pdb**: Trimmed system containing membrane, water, and protein for FEP, with solvent removal and changes in nomenclature
+- **ligand.pdb**: Template for modeling different ligands for FEP
+
+If using the `--noclean` argument:
+- **complex.pdb**: PDB file of the unprepared system
+- **water.pdb**: Extracted waters unprepared
+- **water_fixed.pdb**: Renumbered waters
+- **pymol.log**: Log of pymol transformations
+- **system.pdb.bak**: Backup of system.pdb before renaming residues for Q
+- **trjconv.log**: Output of gmx trjconv script to convert *.gro to *.pdb
+
+## Analysis Scripts Overview
+Under construction.
+
+## Example GPCR Workflow
+
+1. **Prepare Protein and Ligand**:
+    - Use Schrödinger Maestro to prepare protein and ligand structures.
+    - Export prepared protein as `protein.pdb` and ligands as PDB files with residue name 'UNK'. 
+    - **Highly recommended**: It is highly recommended to use the default file type names throughout the protocol.
+    - **Note**: Although Maestro allows you to change the residue name from UNK to anything you want, the `setup_pym` script is optimized for renaming from UNK.
+
+2. **Execute `setup_pym.py`**:
+    - Place all files (protein and ligands) in a directory.
+    - Run `setup_pym.py` to prepare the system for PyMemDyn.
+    - This creates a subdirectory for each ligand, containing:
+        - The ligand-receptor complex file, aligned with the membrane (through PyModSim) for properly PyMemDyn execution.
+        - Ligand parameters generated by Ligpargen.
+        - A script (`pymemdyn.sh`) to execute PyMemDyn within each ligand's subdirectory.
+        - A submission script (`submit_pym.sh`) to submit the PyMemDyn jobs to a cluster SLURM queue (by calling to `pymemdyn.sh`.).
+
+    Please, note that PyModSim execution is included in setup_pym protocol, through: `pymodsim -n 3 -p [PDB]`, which means **no corrections** in the structure of the PDB file. Check [Pymodsim](https://github.com/GPCR-ModSim/pymodsim) for more info. If you want to perform some corrections, after preparing the protein in Maestro, run PyModSim manually and continue the protocol with `old_setup_pym.py`located in developing directory.
+
+3. **Submit PyMemDyn Jobs**:
+    - Execute `sh submit_pym.sh` to submit PyMemDyn jobs to your cluster.
+
+4. **Prepare MD Simulation**:
+    - Run `setup_md.py` to generate MD input files.
+    - This will create a directory for each ligand, containing the necessary input files for running the MD simulations.
+    - Submit the MD job by executing `sh submit_md.sh`.
+    - Analyze data with analysis scripts provided.
+
+5. **Prepare FEP Simulation** (if needed):
+    - Run `setup_fep.py` to prepare FEP files. [UNDER CONSTRUCTION]
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for providing the tools for membrane molecular dynamics calculations.
+- [Ligpargen](https://github.com/Isra3l/ligpargen) for ligand parameter generation.
+
+For any issues or contributions, please open a ticket or submit a pull request on the project's GitHub page.
