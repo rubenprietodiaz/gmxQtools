@@ -46,13 +46,14 @@ This script prepares the files for running an MD simulation. It should be execut
 
 ```bash
 setup_md [-C CLUSTER] [-t TIME]
-         [-rt RUNTIME]
+         [-rt RUNTIME] [-n NUMREPLICAS]
 ```
 
 - **-h, --help**: Show help message
 - **-C CLUSTER**: Choose your cluster from the list (modify code to add more clusters)
 - **-t TIME (ns)**: Time for MD simulation (in nanoseconds)
 - **-rt RUNTIME (hours)**: Limit of time for simulation (in hours)
+- **-n NUM_REPLICAS**: Number of replicas for the MD simulations (default: 1).
 
 After execution, the script generates `md_input_files`. To submit the MD job, enter the directory and execute `sh submit_md.sh`.
 
