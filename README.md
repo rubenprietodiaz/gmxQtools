@@ -6,10 +6,11 @@ This repository contains scripts for setting up molecular dynamics (MD) simulati
 
 Before using these scripts, ensure you have the following software installed:
 - Python (3.7 or higher): highly recommended to create a conda environment named py37.
-- `pymemdyn` package: install through GitHub
-- `Ligpargen` package: install through GitHub
-- Schrödinger Maestro (for protein and ligand preparation)
-- GROMACS (for MD simulations)
+- `PyModSim`: install via [GitHub](https://github.com/GPCR-ModSim/pymodsim).
+- `PyMemDyn`: install via [GitHub](https://github.com/GPCR-ModSim/pymemdyn).
+- `Ligpargen`: install via [GitHub](https://github.com/Isra3l/ligpargen).
+- Schrödinger Maestro: Required for protein and ligand preparation. Note: These scripts have only been tested with the Schrödinger Suite. Alternatively, you may use similar software if compatible.
+- GROMACS: required for MD simulations.
 All the required versions are included in ´requirements.txt´.
 
 ## Setup Scripts Overview
