@@ -13,9 +13,9 @@ Before using these scripts, ensure you have the following software installed:
 - GROMACS: required for MD simulations.
 All the required versions are included in ´requirements.txt´.
 
-## Setup Scripts Overview
+## 1. Setup Scripts Overview
 
-### 1. `setup_pym.py`
+### A. `setup_pym.py`
 This script prepares the system for PyMemDyn simulations. It creates complexes between ligand and receptor, aligns the protein, generates ligand parameters using Ligpargen, and renames the files properly for PyMemDyn.
 
 #### Usage
@@ -39,7 +39,7 @@ setup_pym [-C CLUSTER] [-p PROTEIN]
 
 After execution, this script creates a folder for each ligand, executes Ligpargen for ligand parameters, and generates scripts for PyMemDyn execution (`pymemdyn.sh` inside the ligand folder and `submit_pym.sh` for submitting to a cluster SLURM queue).
 
-### 2. `setup_md.py`
+### B. `setup_md.py`
 This script prepares the files for running an MD simulation. It should be executed inside your directory containing subdirectories for each ligand after running PyMemDyn.
 
 #### Usage
@@ -57,7 +57,7 @@ setup_md [-C CLUSTER] [-t TIME]
 
 After execution, the script generates `md_input_files`. To submit the MD job, enter the directory and execute `sh submit_md.sh`.
 
-### 3. `setup_fep.py`
+### C. `setup_fep.py`
 This script prepares files for FEP simulations. It should be executed inside your directory containing subdirectories for each ligand after running `setup_pym.py`.
 
 #### Usage
@@ -82,7 +82,7 @@ If using the `--noclean` argument:
 - **system.pdb.bak**: Backup of system.pdb before renaming residues for Q
 - **trjconv.log**: Output of gmx trjconv script to convert *.gro to *.pdb
 
-## Analysis Scripts Overview
+## 2. Analysis Scripts Overview
 Under construction.
 
 ## Example GPCR Workflow
@@ -114,7 +114,7 @@ Under construction.
     - Run `setup_md.py` to generate MD input files.
     - This will create a directory for each ligand, containing the necessary input files for running the MD simulations.    
     - Submit the MD job by executing `sh submit_md.sh`.
-    - Analyze data with analysis scripts provided (Analysis Scripts Overview Section).
+    - Analyze data with analysis scripts provided *(Section 2. Analysis Scripts Overview)*.
 
 5. **Prepare FEP Simulation** (if needed):
     - Run `setup_fep.py` to prepare FEP files.
