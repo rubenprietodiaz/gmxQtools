@@ -112,9 +112,9 @@ Under construction.
 
 4. **Prepare MD Simulation**:
     - Run `setup_md.py` to generate MD input files.
-    - This will create a directory for each ligand, containing the necessary input files for running the MD simulations.
+    - This will create a directory for each ligand, containing the necessary input files for running the MD simulations.    
     - Submit the MD job by executing `sh submit_md.sh`.
-    - Analyze data with analysis scripts provided.
+    - Analyze data with analysis scripts provided (Analysis Scripts Overview Section).
 
 5. **Prepare FEP Simulation** (if needed):
     - Run `setup_fep.py` to prepare FEP files.
