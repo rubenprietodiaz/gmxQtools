@@ -5,7 +5,7 @@ import pandas as pd # type: ignore
 import numpy as np # type: ignore
 from collections import defaultdict
 
-# Argument parser setup
+# Argument parser setup and input parameters
 parser = argparse.ArgumentParser(description="Calculate RMSD of a ligand in trajectory files.")
 parser.add_argument('-p', '--pdb_file', type=str, default='finalOutput/start.pdb', help='Path to the PDB file. Default is finalOutput/start.pdb')
 parser.add_argument('-l', '--ligand_name', type=str, default='L01', help='Name of the ligand. Default is L01')
@@ -15,7 +15,6 @@ parser.add_argument('-f', '--reference_frame', type=int, default=0, help='Frame 
 
 args = parser.parse_args()
 
-# Input from argparse with default values
 pdb_file = args.pdb_file
 ligand_name = args.ligand_name
 traj_file = args.traj_file
@@ -51,14 +50,14 @@ for subdir in os.listdir('.'):
         print(f'No atoms found for ligand {ligand_name} in {subdir}.')
         continue
 
-    # Calculate ligand RMSD
+    # Calculations
     traj_ligand = traj.atom_slice(ligand_atom_indices)
     rmsd_values = md.rmsd(traj_ligand, traj_ligand, reference_frame) * 10 # To convert to Angstrom (from nm)
     rmsd_data[subdir.split('_')[0]].append(rmsd_values)
     rmsd_mean = np.mean(rmsd_values)
     rmsd_std = np.std(rmsd_values)
     results_rmsd = results_rmsd.append({'Ligand': subdir, 'Mean_RMSD': rmsd_mean, 'Std_RMSD': rmsd_std}, ignore_index=True)
-    print(f'Mean RMSD: {rmsd_mean}, Std RMSD: {rmsd_std}')
+    print(f'Mean RMSD: {rmsd_mean:.2f}, Std RMSD: {rmsd_std:.2f}') # Print results with 2 decimal places for cleaning terminal output
 
 # Save RMSD data for each group to a single .xvg file
 for assay, rmsd_lists in rmsd_data.items():

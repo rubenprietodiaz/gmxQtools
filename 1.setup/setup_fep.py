@@ -4,7 +4,7 @@ import shutil
 import fileinput
 import argparse
 import subprocess
-import numpy as np
+import numpy as np # type: ignore
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Setup your md simulation after pymemdyn equilibration.")
