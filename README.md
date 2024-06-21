@@ -21,11 +21,11 @@ This script prepares the system for PyMemDyn simulations. It creates complexes b
 #### Usage
 
 ```bash
-setup_pym [-C CLUSTER] [-p PROTEIN]
-          [--noclean] [--noalign]
-          [-l LIGAND] [-w WATERS]
-          [-i IONS] [-fep] 
-          [-r RESTRAINT]
+setup_pym.py [-C CLUSTER] [-p PROTEIN]
+             [--noclean] [--noalign]
+             [-l LIGAND] [-w WATERS]
+             [-i IONS] [-fep] 
+             [-r RESTRAINT]
 ```
 
 - **-h, --help**: Show help message
@@ -45,8 +45,8 @@ This script prepares the files for running an MD simulation. It should be execut
 #### Usage
 
 ```bash
-setup_md [-C CLUSTER] [-t TIME]
-         [-rt RUNTIME] [-n NUMREPLICAS]
+setup_md.py [-C CLUSTER] [-t TIME]
+            [-rt RUNTIME] [-n NUMREPLICAS]
 ```
 
 - **-h, --help**: Show help message
@@ -63,7 +63,7 @@ This script prepares files for FEP simulations. It should be executed inside you
 #### Usage
 
 ```bash
-setup_fep [-d DIR] [-nc]
+setup_fep.py [-d DIR] [-nc]
 ```
 
 - **-h, --help**: Show help message
@@ -83,7 +83,23 @@ If using the `--noclean` argument:
 - **trjconv.log**: Output of gmx trjconv script to convert *.gro to *.pdb
 
 ## 2. Analysis Scripts Overview
-Under construction.
+### A. `rmsd_lig.py`
+This script calculates the RMSD of a ligand in trajectory files, grouping RMSD values from replicated assays into a single file. It processes directories, computes RMSD values, and saves the results in both .xvg and .txt formats.
+
+#### Usage
+
+```bash
+rmsd_lig.py [-p PDB_FILE] [-l LIGAND_NAME]
+            [-t TRAJ_FILE] [-o OUTPUT_FILENAME_RMSD]
+            [-f REFERENCE_FRAME]
+```
+
+- **-h, --help**: Show help message
+- **-p PDB_FILE**: Path to the PDB file (default: finalOutput/start.pdb)
+- **-l LIGAND_NAME**: Name of the ligand (default: L01)
+- **-t TRAJ_FILE**: Path to the trajectory file (default: traj_prod.xtc)
+- **-o OUTPUT_FILENAME_RMSD**: Output filename for RMSD results (default: rmsd_lig_stat.txt)
+- **-f REFERENCE_FRAME**: Frame to use as reference for RMSD calculation (default: 0)
 
 ## Example GPCR Workflow
 <p align="center">
