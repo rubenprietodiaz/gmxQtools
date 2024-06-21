@@ -136,6 +136,8 @@ rmsd_lig.py [-p PDB_FILE] [-l LIGAND_NAME]
     - Run `setup_fep.py` to prepare FEP files.
     - This will create the directory fep_preparation_files that you can use for modelling novel ligands and running [QligFEP](https://github.com/qusers/qligfep) protocol.
 
+6. **Analyze results**: with scripts at *2.analysis* directory.
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
