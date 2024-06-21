@@ -11,6 +11,12 @@ Before using these scripts, ensure you have the following software installed:
 - `Ligpargen`: install via [GitHub](https://github.com/Isra3l/ligpargen).
 - Schrödinger Maestro: Required for protein and ligand preparation. Note: These scripts have only been tested with the Schrödinger Suite. Alternatively, you may use similar software if compatible.
 - GROMACS: required for MD simulations.
+
+For analysis:
+- mdtraj
+- pandas
+- numpy
+
 All the required versions are included in ´requirements.txt´.
 
 ## 1. Setup Scripts Overview

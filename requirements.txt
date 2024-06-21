@@ -4,3 +4,4 @@ scipy>=1.4.1
 matplotlib==3.2.2
 biopython==1.76
 requests==2.24.0
+mdtraj
