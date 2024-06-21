@@ -1,16 +1,28 @@
 import os
+import argparse
 import mdtraj as md # type: ignore
 import pandas as pd # type: ignore
 import numpy as np # type: ignore
 from collections import defaultdict
 
-# Input
-pdb_file = 'pymol/start.pdb' # Now should be 'finalOutput/start.pdb'
-ligand_name = 'L01'
-traj_file = 'traj_prod.xtc'
-output_filename_rmsd = 'rmsd_stat.txt'
+# Argument parser setup
+parser = argparse.ArgumentParser(description="Calculate RMSD of a ligand in trajectory files.")
+parser.add_argument('-p', '--pdb_file', type=str, default='finalOutput/start.pdb', help='Path to the PDB file. Default is finalOutput/start.pdb')
+parser.add_argument('-l', '--ligand_name', type=str, default='L01', help='Name of the ligand. Default is L01')
+parser.add_argument('-t', '--traj_file', type=str, default='traj_prod.xtc', help='Path to the trajectory file. Default is traj_prod.xtc')
+parser.add_argument('-o', '--output_filename_rmsd', type=str, default='rmsd_lig_stat.txt', help='Output filename for RMSD results. Default is rmsd_stat.txt')
+parser.add_argument('-f', '--reference_frame', type=int, default=0, help='Frame to use as reference for RMSD calculation. Default is 0')
 
-print(f"This script will calculate the RMSD of the ligand {ligand_name} in the trajectory files.")
+args = parser.parse_args()
+
+# Input from argparse with default values
+pdb_file = args.pdb_file
+ligand_name = args.ligand_name
+traj_file = args.traj_file
+output_filename_rmsd = args.output_filename_rmsd
+reference_frame = args.reference_frame
+
+print(f"This script will calculate the RMSD of the ligand {ligand_name} in the trajectory files using frame {reference_frame} as reference.")
 
 results_rmsd = pd.DataFrame(columns=['Ligand', 'Mean_RMSD', 'Std_RMSD'])
 rmsd_data = defaultdict(list) # Dictionary to store RMSD data for each group
@@ -19,12 +31,11 @@ for subdir in os.listdir('.'):
     if not os.path.isdir(subdir):
         continue
 
-    print(f'Entering {subdir}...')
+    print(f'Analyzing {subdir}...')
 
     pdb_file_path = os.path.join(subdir, pdb_file)
     xtc_file = os.path.join(subdir, traj_file)
-    print(f'PDB file: {pdb_file_path}\nTrajectory file: {xtc_file}')
-
+    
     if not os.path.exists(pdb_file_path) or not os.path.exists(xtc_file): # If the files are not found, skip the directory
         print(f'Trajectory or PDB file not found in {subdir}.')
         continue
@@ -33,7 +44,6 @@ for subdir in os.listdir('.'):
     selection_query = 'not resname POPC and not resname SOL'
     selected_indices_traj = md.load(pdb_file_path).top.select(selection_query)
     traj = md.load(xtc_file, top=pdb_file_path, atom_indices=selected_indices_traj)
-    print('Trajectory loaded successfully.')
 
     # Select ligand atoms
     ligand_atom_indices = traj.top.select(f'resname {ligand_name}')
@@ -43,14 +53,12 @@ for subdir in os.listdir('.'):
 
     # Calculate ligand RMSD
     traj_ligand = traj.atom_slice(ligand_atom_indices)
-    rmsd_values = md.rmsd(traj_ligand, traj_ligand, 0) * 10 # To convert to Angstrom (from nm)
+    rmsd_values = md.rmsd(traj_ligand, traj_ligand, reference_frame) * 10 # To convert to Angstrom (from nm)
     rmsd_data[subdir.split('_')[0]].append(rmsd_values)
     rmsd_mean = np.mean(rmsd_values)
     rmsd_std = np.std(rmsd_values)
     results_rmsd = results_rmsd.append({'Ligand': subdir, 'Mean_RMSD': rmsd_mean, 'Std_RMSD': rmsd_std}, ignore_index=True)
     print(f'Mean RMSD: {rmsd_mean}, Std RMSD: {rmsd_std}')
-
-    print(f'Exiting {subdir}...')
 
 # Save RMSD data for each group to a single .xvg file
 for assay, rmsd_lists in rmsd_data.items():
@@ -69,9 +77,7 @@ for assay, rmsd_lists in rmsd_data.items():
                 else:
                     line.append("")  # Fill missing values with empty strings
             f.write(" ".join(line) + "\n")
-    print(f'Grouped RMSD values saved to {xvg_filename_rmsd}.')
 
 # Save results to a file
 results_rmsd = results_rmsd.sort_values(by='Ligand')
 results_rmsd.to_csv(output_filename_rmsd, sep='\t', index=False)
-print(f'RMSD results saved to {output_filename_rmsd}.')
