@@ -77,6 +77,8 @@ for assay, rmsd_lists in rmsd_data.items():
                     line.append("")  # Fill missing values with empty strings
             f.write(" ".join(line) + "\n")
 
+# To do: Add calculations for statistics of RMSD combined values (between replicas)
+
 # Save results to a file
 results_rmsd = results_rmsd.sort_values(by='Ligand')
 results_rmsd.to_csv(output_filename_rmsd, sep='\t', index=False)
