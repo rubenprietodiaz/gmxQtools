@@ -1,22 +1,27 @@
 import os
+import argparse
 import mdtraj as md # type: ignore
 import pandas as pd # type: ignore
 import numpy as np  # type: ignore
 from rdkit import Chem # type: ignore
 from rdkit.Chem import AllChem # type: ignore
+from collections import defaultdict
 
-# Input // change to argparse (add change smarts-smiles? or maximmum common substructure?)
-pdb_file = 'pymol/start.pdb'
-smarts_pattern = '[#8]-[#6]-[#7]-[#6]1-[#6](-[#6]-[#6](-[#6]-[#6]-1-[#9])-[#6](-[#8])-[#7]-[#6]1-[#7]-[#6]-[#6]-[#16]-1)-[#9]' # Example for Lundbeck project
-ligand_name = 'L01'
-ligand_pdb = f'{ligand_name}.pdb'
-traj_file = 'pymol/traj_prod_pymol.xtc' # change to traj_prod.xtc is the same, no significant difference, but recommend in README to use post-processed trajectories
-xvg_filename_rmsd = 'rmsd.xvg'
-xvg_filename_rmsf = 'rmsf.xvg'
-output_filename_rmsd = 'rmsd_stat.txt'
-output_filename_rmsf = 'rmsf_results_old.txt'
+# Argument parser setup and input parameters
+parser = argparse.ArgumentParser(description="Calculate RMSD of a ligand in trajectory files.")
+parser.add_argument('-p', '--pdb_file', type=str, default='pymol/start.pdb', help='Path to the PDB file. Default is pymol/start.pdb')
+parser.add_argument('-s', '--smarts_pattern', type=str, help='SMARTS pattern. If not provided, analyze the whole ligand')
+parser.add_argument('-l', '--ligand_name', type=str, default='L01', help='Name of the ligand. Default is L01')
+parser.add_argument('-t', '--traj_file', type=str, default='pymol/traj_prod_pymol.xtc', help='Path to the trajectory file. Default is pymol/traj_prod_pymol.xtc')
+parser.add_argument('-o', '--output_filename_rmsd', type=str, default='rmsd_stat.txt', help='Output filename for RMSD results. Default is rmsd_stat.txt')
 
-# To do: make possible to input the SMARTS pattern with H (remove them) and multiple bonds (e.g. aromatic bonds)
+args = parser.parse_args()
+
+pdb_file = args.pdb_file
+smarts_pattern = args.smarts_pattern
+ligand_name = args.ligand_name
+traj_file = args.traj_file
+output_filename_rmsd = args.output_filename_rmsd
 
 # Definitions
 def extract_ligand(pdb_file, ligand_name, output_file):
@@ -44,8 +49,15 @@ def return_atom_numbers(smarts, ligand_pdb):
         atom_numbers.append((int(lines[number].split()[1])) - 1) # Get the atom number from the PDB file | -1 to match the 0-based indexing of MDTraj
     return atom_numbers
 
+# Run the script
+if smarts_pattern:
+    print(f'This script will calculate the RMSD of the ligand {ligand_name} in the trajectory files using the SMARTS pattern {smarts_pattern}.')
+          
+else:
+    print(f'This script will calculate the RMSD of the ligand {ligand_name} in the trajectory files.')
+
 results_rmsd = pd.DataFrame(columns=['Ligand', 'Mean_RMSD', 'Std_RMSD'])
-results_rmsf = pd.DataFrame(columns=['Ligand', 'Mean_RMSF', 'Std_RMSF'])
+rmsd_data = defaultdict(list) # Dictionary to store RMSD data for each group
 
 for subdir in os.listdir('.'):
     if not os.path.isdir(subdir):
@@ -55,33 +67,39 @@ for subdir in os.listdir('.'):
 
     pdb_file_path = os.path.join(subdir, pdb_file)
     xtc_file = os.path.join(subdir, traj_file)
-    print(f'PDB file: {pdb_file_path}\nTrajectory file: {xtc_file}')
 
     if not os.path.exists(pdb_file_path) or not os.path.exists(xtc_file):
         print(f'Trajectory or PDB file not found in {subdir}.')
         continue
 
-    # Load trajectory excluding unnecessary residues
+    # Load trajectory excluding membrane and solvent to improve performance
     selection_query = 'not resname POPC and not resname SOL' # Better performance with this query
     selected_indices_traj = md.load(pdb_file_path).top.select(selection_query)
     traj = md.load(xtc_file, top=pdb_file_path, atom_indices=selected_indices_traj)
-    print('Trajectory and reference pose loaded successfully.')
 
-    # Process the ligand
-    extract_ligand(pdb_file_path, ligand_name, ligand_pdb) # Extract ligand from the trajectory
+    # Select ligand atoms
+    if smarts_pattern:
+        ligand_pdb = f'{ligand_name}.pdb'
+        extract_ligand(pdb_file_path, ligand_name, ligand_pdb) # Extract ligand from the trajectory
+        lig_atom_numbers = return_atom_numbers(smarts_pattern, ligand_pdb) # List of atom numbers in the ligand PDB file that match the SMARTS pattern
+    else:
+        lig_atom_numbers = traj.top.select(f'resname {ligand_name}')
 
-    lig_atom_numbers = return_atom_numbers(smarts_pattern, ligand_pdb) # List of atom numbers in the ligand PDB file that match the SMARTS pattern
+    if len(lig_atom_numbers) == 0:
+        print(f'No atoms found for ligand {ligand_name} in {subdir}.')
+        continue
 
-    # Slice the trajectory to include only the ligand coinciding SMARTS pattern
-    traj = traj.atom_slice(lig_atom_numbers)
-
-    # Calculate RMSD
+    # Calculations
+    traj = traj.atom_slice(lig_atom_numbers) # Slice the trajectory to include only the ligand atoms
     rmsd_values = md.rmsd(traj, traj, 0) * 10 # Convert to Angstrom
-    print(f'RMSD values: {rmsd_values}')
     rmsd_mean = np.mean(rmsd_values)
     rmsd_std = np.std(rmsd_values)
     results_rmsd = results_rmsd.append({'Ligand': subdir, 'Mean_RMSD': rmsd_mean, 'Std_RMSD': rmsd_std}, ignore_index=True)
-    print(f'Mean RMSD: {rmsd_mean}, Std RMSD: {rmsd_std}')
+    print(f'Mean RMSD: {rmsd_mean:.2f}, Std RMSD: {rmsd_std:.2f}')
+    
+    # Store RMSD data for each group (assuming subdir names are like 'group_replica')
+    group_name = subdir.split('_')[0]
+    rmsd_data[group_name].append(rmsd_values)
 
     xvg_filename_rmsd = os.path.join(subdir, f"{subdir}_rmsd.xvg")
     with open(xvg_filename_rmsd, 'w') as f:
@@ -93,41 +111,27 @@ for subdir in os.listdir('.'):
             f.write(f"{frame} {rmsd}\n")
     print(f'RMSD values saved to {xvg_filename_rmsd}.')
 
-    # Calculate RMSF
-    rmsf_values = md.rmsf(traj, traj, 0) * 10 # Convert to Angstrom
-    print(f'RMSF values: {rmsf_values}')
-    rmsf_mean = np.mean(rmsf_values)
-    rmsf_std = np.std(rmsf_values)
-    results_rmsf = results_rmsf.append({'Ligand': subdir, 'Mean_RMSF': rmsf_mean, 'Std_RMSF': rmsf_std}, ignore_index=True)
-    print(f'Mean RMSF: {rmsf_mean}, Std RMSF: {rmsf_std}')
+# Save RMSD data for each group to a single .xvg file
+for group, rmsd_lists in rmsd_data.items():
+    xvg_filename_rmsd = f"{group}_rmsd.xvg"
+    with open(xvg_filename_rmsd, 'w') as f:
+        f.write('@ s0 legend "RMSD of {} for {}"\n'.format(ligand_name, group))
+        f.write('@ title "RMSD over time for {}"\n'.format(group))
+        f.write('@ xaxis label "Frame"\n')
+        f.write('@ yaxis label "RMSD (Å)"\n')
+        max_frames = max(len(rmsd) for rmsd in rmsd_lists) # Get the maximum number of frames
+        for frame in range(max_frames): # Iterate over frames
+            line = [f"{frame}"]
+            for rmsd in rmsd_lists:
+                if frame < len(rmsd):
+                    line.append(f"{rmsd[frame]}")
+                else:
+                    line.append("")  # Fill missing values with empty strings
+            f.write(" ".join(line) + "\n")
 
-    xvg_filename_rmsf = os.path.join(subdir, f"{subdir}_rmsf.xvg")
-    with open(xvg_filename_rmsf, 'w') as f:
-        f.write('@ s0 legend "RMSF of {} in {}"\n'.format(ligand_name, subdir))
-        f.write('@ title "RMSF over time"\n')
-        f.write('@ xaxis label "Residue"\n')
-        f.write('@ yaxis label "RMSF (Å)"\n')
-        for residue, rmsf in enumerate(rmsf_values):
-            f.write(f"{residue} {rmsf}\n")
-    print(f'RMSF values saved to {xvg_filename_rmsf}.')
-
-    # Print selected atoms for rmsd calculation (sanity check). Decreases performance.
-    # To do: make this optional instead of always printing
-    # sliced_traj = traj.atom_slice(lig_atom_numbers)
-    # for atom in sliced_traj.topology.atoms:
-    #     print(f"Atom index: {atom.index}, Atom name: {atom.name}, Element: {atom.element.symbol}, Residue name: {atom.residue.name}, Residue index: {atom.residue.index}")
-
-    # ref_sliced_traj = traj.atom_slice(ref_atom_numbers)
-    # for atom in ref_sliced_traj.topology.atoms:
-    #     print(f"Atom index: {atom.index}, Atom name: {atom.name}, Element: {atom.element.symbol}, Residue name: {atom.residue.name}, Residue index: {atom.residue.index}")
-
-    print(f'Exiting {subdir}...')
+# To do: Add calculations for statistics of RMSD combined values (between replicas)
 
 # Save results to a file
 results_rmsd = results_rmsd.sort_values(by='Ligand')
 results_rmsd.to_csv(output_filename_rmsd, sep='\t', index=False)
 print(f'RMSD results saved to {output_filename_rmsd}.')
-
-results_rmsf = results_rmsf.sort_values(by='Ligand')
-results_rmsf.to_csv(output_filename_rmsf, sep='\t', index=False)
-print(f'RMSF results saved to {output_filename_rmsf}.')
