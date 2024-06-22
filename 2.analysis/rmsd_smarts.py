@@ -14,6 +14,7 @@ parser.add_argument('-s', '--smarts_pattern', type=str, help='SMARTS pattern. If
 parser.add_argument('-l', '--ligand_name', type=str, default='L01', help='Name of the ligand. Default is L01')
 parser.add_argument('-t', '--traj_file', type=str, default='pymol/traj_prod_pymol.xtc', help='Path to the trajectory file. Default is pymol/traj_prod_pymol.xtc')
 parser.add_argument('-o', '--output_filename_rmsd', type=str, default='rmsd_stat.txt', help='Output filename for RMSD results. Default is rmsd_stat.txt')
+parser.add_argument('-f', '--reference_frame', type=int, default=0, help='Frame to use as reference for RMSD calculation. Default is 0')
 
 args = parser.parse_args()
 
@@ -22,6 +23,7 @@ smarts_pattern = args.smarts_pattern
 ligand_name = args.ligand_name
 traj_file = args.traj_file
 output_filename_rmsd = args.output_filename_rmsd
+reference_frame = args.reference_frame
 
 # Definitions
 def extract_ligand(pdb_file, ligand_name, output_file):
@@ -52,7 +54,6 @@ def return_atom_numbers(smarts, ligand_pdb):
 # Run the script
 if smarts_pattern:
     print(f'This script will calculate the RMSD of the ligand {ligand_name} in the trajectory files using the SMARTS pattern {smarts_pattern}.')
-          
 else:
     print(f'This script will calculate the RMSD of the ligand {ligand_name} in the trajectory files.')
 
@@ -91,7 +92,7 @@ for subdir in os.listdir('.'):
 
     # Calculations
     traj = traj.atom_slice(lig_atom_numbers) # Slice the trajectory to include only the ligand atoms
-    rmsd_values = md.rmsd(traj, traj, 0) * 10 # Convert to Angstrom
+    rmsd_values = md.rmsd(traj, traj, reference_frame) * 10 # Convert to Angstrom
     rmsd_mean = np.mean(rmsd_values)
     rmsd_std = np.std(rmsd_values)
     results_rmsd = results_rmsd.append({'Ligand': subdir, 'Mean_RMSD': rmsd_mean, 'Std_RMSD': rmsd_std}, ignore_index=True)
