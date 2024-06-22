@@ -88,6 +88,7 @@ If using the `--noclean` argument:
 - **system.pdb.bak**: Backup of system.pdb before renaming residues for Q
 - **trjconv.log**: Output of gmx trjconv script to convert *.gro to *.pdb
 
+
 ## 2. Analysis Scripts Overview
 ### A. `rmsd_lig.py`
 This script calculates the RMSD of a ligand in trajectory files, grouping RMSD values from replicated assays into a single file. It processes directories, computes RMSD values, and saves the results in both .xvg (frame by frame) and .txt (mean in each replicate) formats. The script now supports SMARTS patterns and SMILES codes for analyzing specific parts of the ligand, and the option to calculate RMSD for atoms not matching the SMARTS pattern or MCS with SMILES.
@@ -102,15 +103,15 @@ rmsd_lig.py [-p PDB_FILE] [-t TRAJ_FILE]
             [-f REFERENCE_FRAME]
 ```
 
-- **-h, --help**: Show help message
-- **-p PDB_FILE**: Path to the PDB file (default: finalOutput/start.pdb)
-- **-s SMARTS_PATTERN**: Deprecated. SMARTS pattern for specific part of the ligand. Provide a simplified pattern (no Hs, no aromaticity, no bond orders)
+- **-h, --help**: Show help message.
+- **-p PDB_FILE**: Path to the PDB file (default: `finalOutput/start.pdb`).
+- **-s SMARTS_PATTERN**: Deprecated. SMARTS pattern for specific part of the ligand. Provide a simplified pattern (no Hs, no aromaticity, no bond orders).
 - **-S SMILES**: SMILES code. If provided, calculate maximum common substructure (MCS) with the SMILES. Optionally analyze a specific part of the ligand by providing the SMILES code for that part.
-- **-i, --inverse**: Calculate RMSD for atoms not matching the SMARTS pattern or MCS with SMILES
-- **-l LIGAND_NAME**: Name of the ligand (default: L01)
-- **-t TRAJ_FILE**: Path to the trajectory file (default: finalOutput/traj_prod_pymol.xtc)
-- **-o OUTPUT_FILENAME_RMSD**: Output filename for RMSD results (default: rmsd_stat.txt)
-- **-f REFERENCE_FRAME**: Frame to use as reference for RMSD calculation (default: 0)
+- **-i, --inverse**: Calculate RMSD for atoms not matching the SMARTS pattern or MCS with SMILES.
+- **-l LIGAND_NAME**: Name of the ligand (default: `L01`).
+- **-t TRAJ_FILE**: Path to the trajectory file (default: `finalOutput/traj_prod_pymol.xtc`).
+- **-o OUTPUT_FILENAME_RMSD**: Output filename for RMSD results (default: `rmsd_stat.txt`).
+- **-f REFERENCE_FRAME**: Frame to use as reference for RMSD calculation (default: 0).
 
 #### Functionality
 
