@@ -165,7 +165,7 @@ for subdir in os.listdir('.'):
 
 # Save combined RMSD data for each group to a single .xvg file
 for group, rmsd_lists in rmsd_data.items():
-    xvg_filename_rmsd_combined = f"{group}_combined_rmsd.xvg"
+    xvg_filename_rmsd_combined = f"{group}_rmsd.xvg"
     with open(xvg_filename_rmsd_combined, 'w') as f:
         f.write(f'@ title "Combined RMSD over time for {group}"\n')
         f.write('@ xaxis label "Frame"\n')
