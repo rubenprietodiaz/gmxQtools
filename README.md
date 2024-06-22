@@ -11,6 +11,7 @@ Before using these scripts, ensure you have the following software installed:
 - `Ligpargen`: install via [GitHub](https://github.com/Isra3l/ligpargen).
 - Schrödinger Maestro: Required for protein and ligand preparation. Note: These scripts have only been tested with the Schrödinger Suite. Alternatively, you may use similar software if compatible.
 - GROMACS: required for MD simulations.
+- PyMol: for setup FEP files via `conda install -c conda-forge pymol-open-source`. 
 
 For analysis:
 - mdtraj
@@ -169,5 +170,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [PyMemDyn](https://github.com/GPCR-ModSim/pymemdyn) for providing the tools for membrane molecular dynamics calculations.
 - [PyModSim](https://github.com/GPCR-ModSim/pymodsim) for providing the tools for membrane alignment.
 - [Ligpargen](https://github.com/Isra3l/ligpargen) for ligand parameter generation.
+- @JarrettSJohnson for [error](https://github.com/schrodinger/pymol-open-source/issues/304) solution with Pymol
 
 For any issues or contributions, please open a ticket or submit a pull request on the project's GitHub page.
