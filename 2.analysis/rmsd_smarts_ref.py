@@ -7,9 +7,11 @@ from rdkit.Chem import AllChem # type: ignore
 
 # Input // change to argparse (add change smarts-smiles? or maximmum common substructure?)
 pdb_file = 'pymol/start.pdb'
+ref_pdb_file = 'ref.pdb'
 smarts_pattern = '[#8]-[#6]-[#7]-[#6]1-[#6](-[#6]-[#6](-[#6]-[#6]-1-[#9])-[#6](-[#8])-[#7]-[#6]1-[#7]-[#6]-[#6]-[#16]-1)-[#9]' # Example for Lundbeck project
 ligand_name = 'L01'
 ligand_pdb = f'{ligand_name}.pdb'
+ref_pdb = 'ref_lig.pdb'
 traj_file = 'pymol/traj_prod_pymol.xtc' # change to traj_prod.xtc is the same, no significant difference, but recommend in README to use post-processed trajectories
 xvg_filename_rmsd = 'rmsd.xvg'
 xvg_filename_rmsf = 'rmsf.xvg'
@@ -64,19 +66,29 @@ for subdir in os.listdir('.'):
     # Load trajectory excluding unnecessary residues
     selection_query = 'not resname POPC and not resname SOL' # Better performance with this query
     selected_indices_traj = md.load(pdb_file_path).top.select(selection_query)
+    selected_indices_ref = md.load(ref_pdb_file).top.select(selection_query)
     traj = md.load(xtc_file, top=pdb_file_path, atom_indices=selected_indices_traj)
+    ref_traj = md.load(ref_pdb_file, atom_indices=selected_indices_ref)
     print('Trajectory and reference pose loaded successfully.')
 
     # Process the ligand
     extract_ligand(pdb_file_path, ligand_name, ligand_pdb) # Extract ligand from the trajectory
+    extract_ligand(ref_pdb_file, ligand_name, ref_pdb) # Extract ligand from the reference pose
 
     lig_atom_numbers = return_atom_numbers(smarts_pattern, ligand_pdb) # List of atom numbers in the ligand PDB file that match the SMARTS pattern
+    ref_atom_numbers = return_atom_numbers(smarts_pattern, ref_pdb) # List of atom numbers in the ligand PDB file that match the SMARTS pattern
+
+    # Align the trajectory with the reference
+    alignment_indices = traj.top.select('backbone')
+    traj.superpose(ref_traj, atom_indices=alignment_indices)
+    print('Trajectory aligned with the reference PDB.')
 
     # Slice the trajectory to include only the ligand coinciding SMARTS pattern
     traj = traj.atom_slice(lig_atom_numbers)
+    ref_traj = ref_traj.atom_slice(ref_atom_numbers)
 
     # Calculate RMSD
-    rmsd_values = md.rmsd(traj, traj, 0) * 10 # Convert to Angstrom
+    rmsd_values = md.rmsd(traj, ref_traj, 0) * 10 # Convert to Angstrom
     print(f'RMSD values: {rmsd_values}')
     rmsd_mean = np.mean(rmsd_values)
     rmsd_std = np.std(rmsd_values)
