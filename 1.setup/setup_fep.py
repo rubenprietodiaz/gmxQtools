@@ -8,7 +8,7 @@ import numpy as np # type: ignore
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Setup your md simulation after pymemdyn equilibration.")
-    parser.add_argument("-d", "--dir", help="Directory of the complex to prepare FEP files. Omit if you don't want to prepare FEP files.")
+    parser.add_argument("-d", "--dir", help="Directory of the complex to prepare FEP files.", required=True)
     parser.add_argument("-nc", "--noclean", help="Do not remove logs and temporary files.", action="store_true")
     return parser.parse_args()
 
