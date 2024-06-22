@@ -12,7 +12,7 @@ from collections import defaultdict
 parser = argparse.ArgumentParser(description="Calculate RMSD of a ligand in trajectory files.")
 parser.add_argument('-p', '--pdb_file', type=str, default='pymol/start.pdb', help='Path to the PDB file. Default is pymol/start.pdb')  # Change to finalOutput/start.pdb
 parser.add_argument('-s', '--smarts_pattern', type=str, help='SMARTS pattern. If not provided, analyze the whole ligand. When used, please provide a simplified SMARTS pattern (no Hs, no aromaticity, no bond orders)')
-parser.add_argument('-S', '--smiles', type=str, help='SMILES code. If provided, calculate maximum common substructure (MCS) with the ligand')
+parser.add_argument('-S', '--smiles', type=str, help='SMILES code. If provided, calculate maximum common substructure (MCS) with the SMILES. If you want to analyze a specific part of the ligand, you can provide the SMILES code for that part.')
 parser.add_argument('-i', '--inverse', action='store_true', help='Calculate RMSD for atoms not matching the SMARTS pattern or MCS with SMILES')
 parser.add_argument('-l', '--ligand_name', type=str, default='L01', help='Name of the ligand. Default is L01')
 parser.add_argument('-t', '--traj_file', type=str, default='pymol/traj_prod_pymol.xtc', help='Path to the trajectory file. Default is pymol/traj_prod_pymol.xtc')  # Change to finalOutput/traj_prod_pymol.xtc
@@ -56,7 +56,7 @@ def remove_hydrogens_and_simplify(mol):
         atom.SetIsAromatic(False)
     return mol
 
-def smarts_match(smarts, ligand_pdb):
+def smarts_match(smarts, ligand_pdb): # Depcrecated
     '''Matches a SMARTS pattern to a ligand PDB file.'''
     mol_from_pdb = Chem.MolFromPDBFile(ligand_pdb)
     mol_from_pdb = remove_hydrogens_and_simplify(mol_from_pdb)
@@ -64,7 +64,7 @@ def smarts_match(smarts, ligand_pdb):
     mol_from_smarts = remove_hydrogens_and_simplify(mol_from_smarts)
     return mol_from_pdb.GetSubstructMatches(mol_from_smarts)  # List of lists with atom numbers
 
-def mcs_match(smiles, ligand_pdb):
+def mcs_match(smiles, ligand_pdb): # Remove hydrogens and simplify for matching
     '''Matches the Maximum Common Substructure (MCS) between a SMILES and a ligand PDB file.'''
     mol_from_pdb = Chem.MolFromPDBFile(ligand_pdb)
     mol_from_pdb = remove_hydrogens_and_simplify(mol_from_pdb)
