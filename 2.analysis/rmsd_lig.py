@@ -10,12 +10,12 @@ from collections import defaultdict
 
 # Argument parser setup and input parameters
 parser = argparse.ArgumentParser(description="Calculate RMSD of a ligand in trajectory files.")
-parser.add_argument('-p', '--pdb_file', type=str, default='pymol/start.pdb', help='Path to the PDB file. Default is pymol/start.pdb')  # Change to finalOutput/start.pdb
+parser.add_argument('-p', '--pdb_file', type=str, default='finalOutput/start.pdb', help='Path to the PDB file. Default is finalOutput/start.pdb') 
 parser.add_argument('-s', '--smarts_pattern', type=str, help='SMARTS pattern. If not provided, analyze the whole ligand. When used, please provide a simplified SMARTS pattern (no Hs, no aromaticity, no bond orders)')
 parser.add_argument('-S', '--smiles', type=str, help='SMILES code. If provided, calculate maximum common substructure (MCS) with the SMILES. If you want to analyze a specific part of the ligand, you can provide the SMILES code for that part.')
 parser.add_argument('-i', '--inverse', action='store_true', help='Calculate RMSD for atoms not matching the SMARTS pattern or MCS with SMILES')
 parser.add_argument('-l', '--ligand_name', type=str, default='L01', help='Name of the ligand. Default is L01')
-parser.add_argument('-t', '--traj_file', type=str, default='pymol/traj_prod_pymol.xtc', help='Path to the trajectory file. Default is pymol/traj_prod_pymol.xtc')  # Change to finalOutput/traj_prod_pymol.xtc
+parser.add_argument('-t', '--traj_file', type=str, default='finalOutput/traj_prod_pymol.xtc', help='Path to the trajectory file. Default is pymol/traj_prod_pymol.xtc')
 parser.add_argument('-o', '--output_filename_rmsd', type=str, default='rmsd_stat.txt', help='Output filename for RMSD results. Default is rmsd_stat.txt')
 parser.add_argument('-f', '--reference_frame', type=int, default=0, help='Frame to use as reference for RMSD calculation. Default is 0')
 
@@ -47,7 +47,7 @@ def extract_ligand(pdb_file, ligand_name, output_file):
             if ligand_name in line:
                 new_file.write(line)
 
-def remove_hydrogens_and_simplify(mol):
+def remove_hydrogens_and_simplify(mol): 
     '''Removes hydrogens, eliminates aromaticity and simplifies bonds in an RDKit molecule.'''
     mol = Chem.RemoveHs(mol)
     for bond in mol.GetBonds():
@@ -95,7 +95,7 @@ else:
     print(f'This script will calculate the RMSD of the ligand {ligand_name} in the trajectory files, with {reference_frame} being the reference frame.')
 
 results_rmsd = pd.DataFrame(columns=['Ligand', 'Mean_RMSD', 'Std_RMSD'])
-rmsd_data = defaultdict(lambda: defaultdict(list))  # Dictionary to store RMSD data for each group and ligand
+rmsd_data = defaultdict(list)  # Dictionary to store RMSD data for each group
 
 for subdir in os.listdir('.'):
     if not os.path.isdir(subdir):
@@ -125,10 +125,10 @@ for subdir in os.listdir('.'):
         extract_ligand(pdb_file_path, ligand_name, ligand_pdb)  # Extract ligand from the trajectory
         matching_atom_numbers = return_atom_numbers(mcs_match(smiles, ligand_pdb), ligand_pdb)  # List of atom numbers in the ligand PDB file that match the MCS with SMILES
     else:
-        matching_atom_numbers = traj.top.select(f'resname {ligand_name} and not element H')  # Excluir hidrógenos si no se da smarts o smiles
+        matching_atom_numbers = traj.top.select(f'resname {ligand_name} and not element H')  # Exclude hydrogens
 
     if inverse and (smarts_pattern or smiles):
-        all_ligand_atoms = set(traj.top.select(f'resname {ligand_name} and not element H'))  # Excluir hidrógenos
+        all_ligand_atoms = set(traj.top.select(f'resname {ligand_name} and not element H'))  # Exclude hydrogens
         non_matching_atom_numbers = list(all_ligand_atoms - set(matching_atom_numbers))
         if len(non_matching_atom_numbers) == 0:
             print(f'No non-matching atoms found for ligand {ligand_name} in {subdir} using the provided SMARTS/SMILES with inverse flag.')
@@ -151,7 +151,7 @@ for subdir in os.listdir('.'):
     
     # Store RMSD data for each group and ligand (assuming subdir names are like 'group_replica')
     group_name = subdir.split('_')[0]
-    rmsd_data[group_name][ligand_name].append(rmsd_values)
+    rmsd_data[group_name].append(rmsd_values)
 
     xvg_filename_rmsd = os.path.join(subdir, f"{subdir}_rmsd.xvg")
     with open(xvg_filename_rmsd, 'w') as f:
@@ -163,26 +163,23 @@ for subdir in os.listdir('.'):
             f.write(f"{frame} {rmsd}\n")
     print(f'RMSD values saved to {xvg_filename_rmsd}.')
 
-# Calculate mean and standard deviation of RMSD for each frame across all replicas for each ligand
-combined_rmsd_stats = []
-
-for group, ligands in rmsd_data.items():
-    max_frames = max(len(rmsd) for ligand in ligands.values() for rmsd in ligand)
-    for frame in range(max_frames):
-        row = {'Frame': frame}
-        for ligand, rmsd_lists in ligands.items():
-            frame_rmsd_values = [rmsd[frame] for rmsd in rmsd_lists if frame < len(rmsd)]
-            if frame_rmsd_values:
-                frame_mean = np.mean(frame_rmsd_values)
-                frame_std = np.std(frame_rmsd_values)
-                row[f'{ligand}_Mean_RMSD'] = frame_mean
-                row[f'{ligand}_Std_RMSD'] = frame_std
-                row[f'{ligand}_Replicas'] = len(frame_rmsd_values)
-        combined_rmsd_stats.append(row)
-
-combined_rmsd_df = pd.DataFrame(combined_rmsd_stats)
-combined_rmsd_df.to_csv('combined_rmsd_stats_by_frame.txt', sep='\t', index=False)
-print('Combined RMSD statistics by frame saved to combined_rmsd_stats_by_frame.txt.')
+# Save combined RMSD data for each group to a single .xvg file
+for group, rmsd_lists in rmsd_data.items():
+    xvg_filename_rmsd_combined = f"{group}_combined_rmsd.xvg"
+    with open(xvg_filename_rmsd_combined, 'w') as f:
+        f.write(f'@ title "Combined RMSD over time for {group}"\n')
+        f.write('@ xaxis label "Frame"\n')
+        f.write('@ yaxis label "RMSD (Å)"\n')
+        max_frames = max(len(rmsd) for rmsd in rmsd_lists)  # Get the maximum number of frames
+        for frame in range(max_frames):  # Iterate over frames
+            line = [f"{frame}"]
+            for rmsd in rmsd_lists:
+                if frame < len(rmsd):
+                    line.append(f"{rmsd[frame]}")
+                else:
+                    line.append("")  # Fill missing values with empty strings
+            f.write(" ".join(line) + "\n")
+    print(f'Combined RMSD values saved to {xvg_filename_rmsd_combined}.')
 
 # Save results to a file
 results_rmsd = results_rmsd.sort_values(by='Ligand')
