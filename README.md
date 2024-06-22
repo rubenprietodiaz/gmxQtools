@@ -90,22 +90,35 @@ If using the `--noclean` argument:
 
 ## 2. Analysis Scripts Overview
 ### A. `rmsd_lig.py`
-This script calculates the RMSD of a ligand in trajectory files, grouping RMSD values from replicated assays into a single file. It processes directories, computes RMSD values, and saves the results in both .xvg and .txt formats.
+This script calculates the RMSD of a ligand in trajectory files, grouping RMSD values from replicated assays into a single file. It processes directories, computes RMSD values, and saves the results in both .xvg (frame by frame) and .txt (mean in each replicate) formats. The script now supports SMARTS patterns and SMILES codes for analyzing specific parts of the ligand, and the option to calculate RMSD for atoms not matching the SMARTS pattern or MCS with SMILES.
 
 #### Usage
 
 ```bash
-rmsd_lig.py [-p PDB_FILE] [-l LIGAND_NAME]
-            [-t TRAJ_FILE] [-o OUTPUT_FILENAME_RMSD]
+rmsd_lig.py [-p PDB_FILE] [-t TRAJ_FILE]
+            [-s SMARTS_PATTERN] [-S SMILES]
+            [-i] [-l LIGAND_NAME]
+            [-o OUTPUT_FILENAME] 
             [-f REFERENCE_FRAME]
 ```
 
 - **-h, --help**: Show help message
 - **-p PDB_FILE**: Path to the PDB file (default: finalOutput/start.pdb)
+- **-s SMARTS_PATTERN**: Deprecated. SMARTS pattern for specific part of the ligand. Provide a simplified pattern (no Hs, no aromaticity, no bond orders)
+- **-S SMILES**: SMILES code. If provided, calculate maximum common substructure (MCS) with the SMILES. Optionally analyze a specific part of the ligand by providing the SMILES code for that part.
+- **-i, --inverse**: Calculate RMSD for atoms not matching the SMARTS pattern or MCS with SMILES
 - **-l LIGAND_NAME**: Name of the ligand (default: L01)
-- **-t TRAJ_FILE**: Path to the trajectory file (default: traj_prod.xtc)
-- **-o OUTPUT_FILENAME_RMSD**: Output filename for RMSD results (default: rmsd_lig_stat.txt)
+- **-t TRAJ_FILE**: Path to the trajectory file (default: finalOutput/traj_prod_pymol.xtc)
+- **-o OUTPUT_FILENAME_RMSD**: Output filename for RMSD results (default: rmsd_stat.txt)
 - **-f REFERENCE_FRAME**: Frame to use as reference for RMSD calculation (default: 0)
+
+#### Functionality
+
+- **SMARTS Pattern**: Analyze specific parts of the ligand by providing a SMARTS pattern. Deprecated, and users are encouraged to use SMILES for better accuracy.
+- **SMILES Code**: Calculate maximum common substructure (MCS) with the ligand using a provided SMILES code. This also allows for analysis of specific parts of the ligand.
+- **Inverse Selection**: Calculate RMSD for atoms that do not match the SMARTS pattern or MCS with SMILES by using the `-i` flag.
+- **Exclusion of Hydrogens**: Hydrogens are excluded from RMSD calculations to ensure consistency and relevance of results.
+- **Combined RMSD Values**: Saves combined RMSD values for each group to a single .xvg file, facilitating easier analysis of replicated assays.
 
 ## Example GPCR Workflow
 <p align="center">
