@@ -42,6 +42,8 @@ setup_pym.py [-C CLUSTER] [-p PROTEIN]
 - **-i IONS**: Ion identifiers of crystallized ions in the PDB file
 - **--res RESTRAINT**: Position restraints during MD production run. Options: bw (Ballesteros-Weinstein Restrained Relaxation - default), ca (C-Alpha Restrained Relaxation)
 - **--fep**: If selected, the run will finish after the initial relaxation. Choose this option if you know you only want to perform FEP simulations.
+- **--noclean**: If selected, the directory will not be clean after processing.
+- **--noalign**: Use this option if the complex is already aligned with PyModSim.
 
 After execution, this script creates a folder for each ligand, executes Ligpargen for ligand parameters, and generates scripts for PyMemDyn execution (`pymemdyn.sh` inside the ligand folder and `submit_pym.sh` for submitting to a cluster SLURM queue).
 
