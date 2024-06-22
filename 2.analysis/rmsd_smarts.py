@@ -7,15 +7,15 @@ from rdkit.Chem import AllChem # type: ignore
 
 # Input // change to argparse (add change smarts-smiles? or maximmum common substructure?)
 pdb_file = 'pymol/start.pdb'
-ref_pdb_file = 'ref.pdb'
+# ref_pdb_file = 'ref.pdb'
 smarts_pattern = '[#8]-[#6]-[#7]-[#6]1-[#6](-[#6]-[#6](-[#6]-[#6]-1-[#9])-[#6](-[#8])-[#7]-[#6]1-[#7]-[#6]-[#6]-[#16]-1)-[#9]' # for Lundbeck project
 ligand_name = 'L01'
 ligand_pdb = f'{ligand_name}.pdb'
-ref_pdb = 'ref_lig.pdb'
-traj_file = 'pymol/traj_prod_pymol.xtc'
+# ref_pdb = 'ref_lig.pdb'
+traj_file = 'pymol/traj_prod_pymol.xtc' # change to traj_prod.xtc is the same, no significant difference, but recommend in README to use post-processed trajectories
 xvg_filename_rmsd = 'rmsd.xvg'
 xvg_filename_rmsf = 'rmsf.xvg'
-output_filename_rmsd = 'rmsd_results_old.txt'
+output_filename_rmsd = 'rmsd_stat.txt'
 output_filename_rmsf = 'rmsf_results_old.txt'
 
 # To do: make possible to input the SMARTS pattern with H (remove them) and multiple bonds (e.g. aromatic bonds)
@@ -46,29 +46,6 @@ def return_atom_numbers(smarts, ligand_pdb):
         atom_numbers.append((int(lines[number].split()[1])) - 1) # Get the atom number from the PDB file | -1 to match the 0-based indexing of MDTraj
     return atom_numbers
 
-def calculations(value_type, traj, ref_traj): # Unused
-    '''Calculates different values for a ligand in a trajectory. Value types: rmsd, rmsf.'''
-    if value_type == 'rmsd':
-        values = md.rmsd(traj, ref_traj, 0) * 10
-        print(f'RMSD values: {values}')
-
-    elif value_type == 'rmsf':
-        values = md.rmsf(traj, ref_traj, 0) * 10
-        print(f'RMSF values: {values}')
-    return values
-
-def statistics(value_type, traj, ref_traj): # Unused
-    '''Calculates the mean and standard deviation of RMSD or RMSF values.'''
-    values = calculations(value_type, traj, ref_traj)
-    mean = np.mean(values)
-    std = np.std(values)
-    print(f'Mean: {mean}, Std: {std}')
-    if value_type == 'rmsd':
-        results_rmsd = results_rmsd.append({'Ligand': subdir, f'Mean_RMSD': mean, f'Std_RMSD': std}, ignore_index=True)
-    elif value_type == 'rmsf':
-        results_rmsf = results_rmsf.append({'Ligand': subdir, f'Mean_RMSF': mean, f'Std_RMSF': std}, ignore_index=True)
-    return results_rmsd, results_rmsf
-
 results_rmsd = pd.DataFrame(columns=['Ligand', 'Mean_RMSD', 'Std_RMSD'])
 results_rmsf = pd.DataFrame(columns=['Ligand', 'Mean_RMSF', 'Std_RMSF'])
 
@@ -76,14 +53,12 @@ for subdir in os.listdir('.'):
     if not os.path.isdir(subdir):
         continue
 
-    print(f'Entering {subdir}...')
+    print(f'Analyzing {subdir}')
 
-    # File paths setup
     pdb_file_path = os.path.join(subdir, pdb_file)
     xtc_file = os.path.join(subdir, traj_file)
     print(f'PDB file: {pdb_file_path}\nTrajectory file: {xtc_file}')
 
-    # Files existence check
     if not os.path.exists(pdb_file_path) or not os.path.exists(xtc_file):
         print(f'Trajectory or PDB file not found in {subdir}.')
         continue

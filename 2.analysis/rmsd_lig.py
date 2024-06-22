@@ -30,7 +30,7 @@ for subdir in os.listdir('.'):
     if not os.path.isdir(subdir):
         continue
 
-    print(f'Analyzing {subdir}...')
+    print(f'Analyzing {subdir}')
 
     pdb_file_path = os.path.join(subdir, pdb_file)
     xtc_file = os.path.join(subdir, traj_file)
