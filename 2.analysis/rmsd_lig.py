@@ -10,12 +10,12 @@ from collections import defaultdict
 
 # Argument parser setup and input parameters
 parser = argparse.ArgumentParser(description="Calculate RMSD of a ligand in trajectory files.")
-parser.add_argument('-p', '--pdb_file', type=str, default='finalOutput/start.pdb', help='Path to the PDB file. Default is finalOutput/start.pdb') 
+parser.add_argument('-p', '--pdb_file', type=str, default='finalOutput/start.pdb', help='Path to the PDB file. Default is finalOutput/start.pdb')
 parser.add_argument('-s', '--smarts_pattern', type=str, help='SMARTS pattern. If not provided, analyze the whole ligand. When used, please provide a simplified SMARTS pattern (no Hs, no aromaticity, no bond orders)')
 parser.add_argument('-S', '--smiles', type=str, help='SMILES code. If provided, calculate maximum common substructure (MCS) with the SMILES. If you want to analyze a specific part of the ligand, you can provide the SMILES code for that part.')
 parser.add_argument('-i', '--inverse', action='store_true', help='Calculate RMSD for atoms not matching the SMARTS pattern or MCS with SMILES')
 parser.add_argument('-l', '--ligand_name', type=str, default='L01', help='Name of the ligand. Default is L01')
-parser.add_argument('-t', '--traj_file', type=str, default='finalOutput/traj_prod_pymol.xtc', help='Path to the trajectory file. Default is pymol/traj_prod_pymol.xtc')
+parser.add_argument('-t', '--traj_file', type=str, default='finalOutput/traj_prod_pymol.xtc', help='Path to the trajectory file. Default is finalOutput/traj_prod_pymol.xtc')
 parser.add_argument('-o', '--output_filename_rmsd', type=str, default='rmsd_stat.txt', help='Output filename for RMSD results. Default is rmsd_stat.txt')
 parser.add_argument('-f', '--reference_frame', type=int, default=0, help='Frame to use as reference for RMSD calculation. Default is 0')
 
@@ -47,7 +47,7 @@ def extract_ligand(pdb_file, ligand_name, output_file):
             if ligand_name in line:
                 new_file.write(line)
 
-def remove_hydrogens_and_simplify(mol): 
+def remove_hydrogens_and_simplify(mol):
     '''Removes hydrogens, eliminates aromaticity and simplifies bonds in an RDKit molecule.'''
     mol = Chem.RemoveHs(mol)
     for bond in mol.GetBonds():
@@ -148,7 +148,7 @@ for subdir in os.listdir('.'):
     rmsd_std = np.std(rmsd_values)
     results_rmsd = results_rmsd.append({'Ligand': subdir, 'Mean_RMSD': rmsd_mean, 'Std_RMSD': rmsd_std}, ignore_index=True)
     print(f'Mean RMSD: {rmsd_mean:.2f}, Std RMSD: {rmsd_std:.2f}')
-    
+
     # Store RMSD data for each group and ligand (assuming subdir names are like 'group_replica')
     group_name = subdir.split('_')[0]
     rmsd_data[group_name].append(rmsd_values)
