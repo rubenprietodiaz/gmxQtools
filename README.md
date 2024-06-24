@@ -124,7 +124,7 @@ rmsd_lig.py [-p PDB_FILE] [-t TRAJ_FILE]
 - **Exclusion of Hydrogens**: Hydrogens are excluded from RMSD calculations to ensure consistency and relevance of results.
 - **Combined RMSD Values**: Saves combined RMSD values for each group to a single .xvg file, facilitating easier analysis of replicated assays.
 
-## Example GPCR Workflow
+## Example GPCR setup Workflow
 <p align="center">
   <img src="/manual/Protocol.jpg" alt="Protocol" />
 </p>
@@ -158,8 +158,6 @@ rmsd_lig.py [-p PDB_FILE] [-t TRAJ_FILE]
 5. **Prepare FEP Simulation** (if needed):
     - Run `setup_fep.py` to prepare FEP files.
     - This will create the directory fep_preparation_files that you can use for modelling novel ligands and running [QligFEP](https://github.com/qusers/qligfep) protocol.
-
-6. **Analyze results**: with scripts at *2.analysis* directory.
 
 ## License
 
