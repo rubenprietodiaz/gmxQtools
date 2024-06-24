@@ -22,6 +22,7 @@ All the required modules are included in requirements.txt. You may also use the 
 
 ```bash
 conda env create -f environment.yml
+conda activate py37
 ```
 
 ## 1. Setup Scripts Overview
