@@ -10,6 +10,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Setup your md simulation after pymemdyn equilibration.")
     parser.add_argument("-d", "--dir", help="Directory of the complex to prepare FEP files.", required=True)
     parser.add_argument("-nc", "--noclean", help="Do not remove logs and temporary files.", action="store_true")
+    #parser.add_argument("-i", "--ions", help="Include ion cofactor name in the PDB file.") || to be implemented || test with A2AR Lundbeck project
     return parser.parse_args()
 
 def prepare_fep_files(complex_directory, destination_folder_fep):
@@ -58,7 +59,7 @@ create water, water or water2
 save {destination_folder_fep}/complex.pdb, complex
 save {destination_folder_fep}/ligand.pdb, lig  
 save {destination_folder_fep}/water.pdb, water
-"""
+""" # Add ions selection if necessary (put an argument to the function and add to the pymol_script)
     with open("process.pml", "w") as file:
         file.write(pymol_script)
     
