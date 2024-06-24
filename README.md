@@ -18,7 +18,7 @@ For analysis:
 - pandas
 - numpy
 
-All the required modules are included in ´requirements.txt´. You may also use the `environment.yml` file in this repository, checking the installation of ligpargen, PyModSim and PyMemDyn following instructions located on each repository.
+All the required modules are included in requirements.txt. You may also use the environment.yml file in this repository. Ensure the installation of LigParGen, PyModSim, and PyMemDyn by following the instructions located in each respective repository.
 
 ```bash
 conda env create -f environment.yml
