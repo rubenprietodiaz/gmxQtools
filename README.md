@@ -175,26 +175,6 @@ my_project
 ### C. `setup_fep.py`
 This script prepares files for FEP simulations. It should be executed inside your directory containing subdirectories for each ligand after running `setup_pym.py`.
 
-**After running setup_md.py**:
-```bash
-my_project
-├── inputFiles
-│   ├── protein.pdb
-│   ├── lig1.pdb
-│   ├── lig2.pdb
-│   ├── lig3.pdb
-│   └── lig(n).pdb
-├── lig1
-├── lig2
-├── lig3
-├── lig(n)
-├── submit_pym.sh
-├── setup_md.py
-└── fep_preparation_files <- New folder
-│   ├── system.pdb <- Membrane, cofactos (ions), solvent and protein.
-│   └── ligand.pdb <- Ligand for modelling
-```
-
 #### Usage
 
 ```bash
@@ -216,6 +196,26 @@ If using the `--noclean` argument:
 - **pymol.log**: Log of pymol transformations
 - **system.pdb.bak**: Backup of system.pdb before renaming residues for Q
 - **trjconv.log**: Output of gmx trjconv script to convert *.gro to *.pdb
+
+**After running setup_md.py**:
+```bash
+my_project
+├── inputFiles
+│   ├── protein.pdb
+│   ├── lig1.pdb
+│   ├── lig2.pdb
+│   ├── lig3.pdb
+│   └── lig(n).pdb
+├── lig1
+├── lig2
+├── lig3
+├── lig(n)
+├── submit_pym.sh
+├── setup_md.py
+└── fep_preparation_files <- New folder
+│   ├── system.pdb <- Membrane, cofactos (ions), solvent and protein.
+│   └── ligand.pdb <- Ligand for modelling
+```
 
 
 ## 2. Analysis Scripts Overview
@@ -251,10 +251,6 @@ rmsd_lig.py [-p PDB_FILE] [-t TRAJ_FILE]
 - **Combined RMSD Values**: Saves combined RMSD values for each group to a single .xvg file, facilitating easier analysis of replicated assays.
 
 ## Example GPCR setup Workflow
-<p align="center">
-  <img src="/manual/Protocol.jpg" alt="Protocol" />
-</p>
-
 1. **Prepare Protein and Ligand**:
     - Use Schrödinger Maestro to prepare protein and ligand structures.
     - Export prepared protein as `protein.pdb` and ligands as PDB files with residue name 'UNK'. 
