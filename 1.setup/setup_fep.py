@@ -59,7 +59,8 @@ create water, water or water2
 save {destination_folder_fep}/complex.pdb, complex
 save {destination_folder_fep}/ligand.pdb, lig  
 save {destination_folder_fep}/water.pdb, water
-""" # Add ions selection if necessary (put an argument to the function and add to the pymol_script)
+""" 
+    # Add ions selection if necessary (put an argument to the function and add to the pymol_script)
     with open("process.pml", "w") as file:
         file.write(pymol_script)
     

@@ -53,6 +53,65 @@ setup_pym.py [-C CLUSTER] [-p PROTEIN]
 
 After execution, this script creates a folder for each ligand, executes Ligpargen for ligand parameters, and generates scripts for PyMemDyn execution (`pymemdyn.sh` inside the ligand folder and `submit_pym.sh` for submitting to a cluster SLURM queue).
 
+**Before execution**:
+```bash
+my_project
+├── protein.pdb
+├── lig1.pdb
+├── lig2.pdb
+├── lig3.pdb
+├── lig(n).pdb
+└── setup_pym.py <- execute this to prepare files
+```
+
+**After setup_pym.py execution**:
+```bash
+my_project
+├── inputFiles
+│   ├── protein.pdb
+│   ├── lig1.pdb
+│   ├── lig2.pdb
+│   ├── lig3.pdb
+│   └── lig(n).pdb
+├── lig1
+│   ├── complex.pdb <- Aligned complex between lig1.pdb and protein.pdb
+│   ├── files for ligand parameters (*.itp, *.rtf, *.cms...)
+│   ├── ligpargen.log <-ligpargen execution log
+│   └── pymemdyn.sh <- SLURM execution for PyMemDyn
+├── lig2
+├── lig3
+├── lig(n)
+└── submit_pym.sh  <- Calls pymemdyn.sh inside each directory
+
+```
+
+**After running PyMemDyn**:
+```bash
+my_project
+├── inputFiles
+│   ├── protein.pdb
+│   ├── lig1.pdb
+│   ├── lig2.pdb
+│   ├── lig3.pdb
+│   └── lig(n).pdb
+├── lig1
+│   ├── files & directories
+│   ├── eqProd/
+│   │   ├── confout200.gro <- Starting point for FEP
+│   │   ├── confout.gro
+│       └── other files
+│   └── finalOutput
+│       ├── logs/
+│       ├── reports/
+│       ├── prod.mdp <- Template for MD
+│       ├── confout.gro <- Starting point for MD
+│       └── module2
+├── lig2
+├── lig3
+├── lig(n)
+└── submit_pym.sh  
+
+```
 ### B. `setup_md.py`
 This script prepares the files for running an MD simulation. It should be executed inside your directory containing subdirectories for each ligand after running PyMemDyn.
 
@@ -71,8 +130,70 @@ setup_md.py [-C CLUSTER] [-t TIME]
 
 After execution, the script generates `md_input_files`. To submit the MD job, enter the directory and execute `sh submit_md.sh`.
 
+**After running setup_md.py**:
+```bash
+my_project
+├── inputFiles
+│   ├── protein.pdb
+│   ├── lig1.pdb
+│   ├── lig2.pdb
+│   ├── lig3.pdb
+│   └── lig(n).pdb
+├── lig1
+├── lig2
+├── lig3
+├── lig(n)
+├── submit_pym.sh
+├── setup_md.py
+└── md_input_files <- New folder
+│   ├── lig1_1 <- Replica 1 ligand 1
+│   │   ├── LIG.itp         
+│   │   ├── ffoplsaa_mod.itp
+│   │   ├── index.ndx  
+│   │   ├── posre.itp      
+│   │   ├── posre_NA.itp  
+│   │   ├── run_md.sh <- SLURM execution for MD
+│   │   ├── topol.tpr
+│   │   ├── LIG_backup.itp  
+│   │   ├── ffoplsaabon_mod.itp  
+│   │   ├── ions.itp   
+│   │   ├── posre_HOH.itp
+│   │   ├── prod.mdp <- Modified with setup_md.py
+│   │   ├── spc.itp
+│   │   ├── confout.gro
+│   │   ├── ffoplsaanb_mod.itp
+│   │   ├── popc.itp
+│   │   ├── posre_LIG.itp
+│   │   ├── protein.itp
+│   │   ├── topol.top
+│   ├── lig1_2 <- Replica 2 ligand 1
+│   ├── lig1_n <- Replica n ligand 1
+│   └── submit_md.sh <- Calls run_md.sh inside each directory
+
+```
+
 ### C. `setup_fep.py`
 This script prepares files for FEP simulations. It should be executed inside your directory containing subdirectories for each ligand after running `setup_pym.py`.
+
+**After running setup_md.py**:
+```bash
+my_project
+├── inputFiles
+│   ├── protein.pdb
+│   ├── lig1.pdb
+│   ├── lig2.pdb
+│   ├── lig3.pdb
+│   └── lig(n).pdb
+├── lig1
+├── lig2
+├── lig3
+├── lig(n)
+├── submit_pym.sh
+├── setup_md.py
+└── fep_preparation_files <- New folder
+│   ├── system.pdb <- Membrane, cofactos (ions), solvent and protein.
+│   └── ligand.pdb <- Ligand for modelling
+```
 
 #### Usage
 
