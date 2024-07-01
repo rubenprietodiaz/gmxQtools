@@ -35,6 +35,7 @@ This script prepares the system for PyMemDyn simulations. It creates complexes b
 ```bash
 setup_pym.py [-C CLUSTER] [-p PROTEIN]
              [--noclean] [--noalign]
+             [-cb CHARGE]
              [-l LIGAND] [-w WATERS]
              [-i IONS] [-fep] 
              [-r RESTRAINT]
@@ -46,6 +47,7 @@ setup_pym.py [-C CLUSTER] [-p PROTEIN]
 - **-l LIGAND**: Ligand identifiers in pdb (default = UNK, from Maestro)
 - **-w WATERS**: Water identifiers of crystallized water molecules in the PDB file
 - **-i IONS**: Ion identifiers of crystallized ions in the PDB file
+- **-cb CHARGE**: Ligand charge (for ligpargen execution, default = 0)
 - **--res RESTRAINT**: Position restraints during MD production run. Options: bw (Ballesteros-Weinstein Restrained Relaxation - default), ca (C-Alpha Restrained Relaxation)
 - **--fep**: If selected, the run will finish after the initial relaxation. Choose this option if you know you only want to perform FEP simulations.
 - **--noclean**: If selected, the directory will not be clean after processing.

@@ -10,6 +10,9 @@ def parse_arguments():
     parser.add_argument("-l", nargs='?', default="LIG", help="Ligand identifier (default: LIG).")
     parser.add_argument("-na", "--noalign", action='store_true', help="Do not align the protein and ligand. Use this option if the complex is already aligned with PyModSim.")
 
+    # Parameters for LigParGen execution
+    parser.add_argument("-cb", "--chargebalance", nargs='?', default="0", help="Charge balance (default: 0).") # Test with 0 and 1 (Lundbeck ligands with piperazine ring)
+
     # Parameters for Pymemdyn execution
     parser.add_argument("-r", "--res", nargs='?', default="ca", help="Restraints. Options: bw (Ballesteros-Weinstein Restrained Relaxation), ca (C-Alpha Restrained Relaxation - default).")
     parser.add_argument("-w", nargs='?', default="HOH", help="Water identifiers (default: HOH).")
@@ -57,7 +60,7 @@ for file in os.listdir('.'):
 
         # Execute ligpargen and rename files
         print(f"[1/3] Running LigParGen for {dir_name}")
-        os.system(f'ligpargen -i LIG.pdb -cb 0 -ob 3 -r LIG -n LIG > ligpargen.log 2>&1')
+        os.system(f'ligpargen -i LIG.pdb -cb {args.chargebalance} -ob 3 -r LIG -n LIG > ligpargen.log 2>&1')
         os.rename('LIG.gmx.gro', 'LIG.gro')
         os.rename('LIG.openmm.pdb', 'LIG.pdb')
         os.rename('LIG.gmx.itp', 'LIG.itp')
