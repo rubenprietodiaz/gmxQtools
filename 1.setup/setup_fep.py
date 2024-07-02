@@ -8,7 +8,7 @@ import numpy as np # type: ignore
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Setup your md simulation after pymemdyn equilibration.")
-    parser.add_argument("-d", "--dir", help="Directory of the complex to prepare FEP files.", required=True)
+    parser.add_argument("-d", "--dir", help="Directory of the complex to prepare FEP files.", required=True) # to do: if executed with d, prepare fep files, if not, prepare 1.ligprep, 2.protprep, 3.setupfep for QligFEP use (automated) 
     parser.add_argument("-nc", "--noclean", help="Do not remove logs and temporary files.", action="store_true")
     #parser.add_argument("-i", "--ions", help="Include ion cofactor name in the PDB file.") || to be implemented || test with A2AR Lundbeck project
     return parser.parse_args()

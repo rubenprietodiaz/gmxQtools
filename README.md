@@ -214,7 +214,7 @@ my_project
 ├── submit_pym.sh
 ├── setup_md.py
 └── fep_preparation_files <- New folder
-│   ├── system.pdb <- Membrane, cofactos (ions), solvent and protein.
+│   ├── system.pdb <- Membrane, cofactors (ions), solvent and protein.
 │   └── ligand.pdb <- Ligand for modelling
 ```
 
