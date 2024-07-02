@@ -5,15 +5,11 @@ import shutil
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Process ligand and protein for PyMemDyn execution.")
     parser.add_argument("--noclean", action='store_true', help="Do not clean the directory after processing.")
-    parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="TETRA", help="Choose the cluster (default: TETRA).") # Changed to CSB for testing
+    parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="TETRA", help="Choose the cluster (default: TETRA).")
     parser.add_argument("-p", "--protein", nargs='?', default="protein.pdb", help="Protein file name (default: protein.pdb).")
     parser.add_argument("-l", nargs='?', default="LIG", help="Ligand identifier (default: LIG).")
     parser.add_argument("-na", "--noalign", action='store_true', help="Do not align the protein and ligand. Use this option if the complex is already aligned with PyModSim.")
-
-    # Parameters for LigParGen execution
-    parser.add_argument("-cb", "--chargebalance", nargs='?', default="0", help="Charge balance (default: 0).") # Test with 0 and 1 (Lundbeck ligands with piperazine ring)
-
-    # Parameters for Pymemdyn execution
+    parser.add_argument("-cb", "--chargebalance", nargs='?', default="0", help="Charge balance (default: 0).")
     parser.add_argument("-r", "--res", nargs='?', default="ca", help="Restraints. Options: bw (Ballesteros-Weinstein Restrained Relaxation), ca (C-Alpha Restrained Relaxation - default).")
     parser.add_argument("-w", nargs='?', default="HOH", help="Water identifiers (default: HOH).")
     parser.add_argument("-i", nargs='?', default="NA", help="Ion identifiers (default: NA).")
@@ -23,13 +19,14 @@ def parse_arguments():
 args = parse_arguments()
 start_dir = os.getcwd()
 if args.fep:
-    print('You have chosen to prepare files for FEP calculations. This is faster, but you will need to run the full relaxation manually if want to run MD.')
+    print('You have chosen to prepare files for FEP calculations. This is faster, but you will need to run the full relaxation manually if you want to run MD.')
 if args.noclean:
     print('You have chosen to not clean the directory after processing')
 if args.cluster:
     print(f'You have chosen the {args.cluster} cluster for execution. Please, make sure the options are correct.')
 if args.noalign:
     print(f'You have chosen to avoid PyModSim alignment. Be sure the complex is already aligned.')
+
 # Loop through all .pdb files in the current directory, excluding the protein file
 for file in os.listdir('.'):
     if file.endswith('.pdb') and file != args.protein:
@@ -65,7 +62,7 @@ for file in os.listdir('.'):
         os.rename('LIG.openmm.pdb', 'LIG.pdb')
         os.rename('LIG.gmx.itp', 'LIG.itp')
 
-        if args.noalign is False:
+        if not args.noalign:
             # Execute pymodsim for alignment of complex.pdb and clean files
             print(f"[2/3] Running PyModSim for {dir_name}")
             os.system('pymodsim -n 3 -p complex.pdb > pymodsim.log 2>&1')
@@ -74,7 +71,7 @@ for file in os.listdir('.'):
                 shutil.copy('finalOutput/complex.pdb', 'complex.pdb')
                 
                 # Remove files from pymodsim
-                if args.noclean is False:
+                if not args.noclean:
                     files_to_delete = [
                         'pymodsim.log',
                         'Model_output.tgz',
@@ -97,7 +94,9 @@ for file in os.listdir('.'):
                 print("Warning: PyModSim alignment didn't work, check manually the complex.pdb file.")
         else:
             print(f"[2/3] Skipping alignment for {dir_name}.")
+        
         # pymemdyn.sh script inside the directory
+        pymemdyn_content = ""
         if args.cluster == "CSB":
             pymemdyn_content = f"""#!/bin/bash -l
 #SBATCH -N 1
