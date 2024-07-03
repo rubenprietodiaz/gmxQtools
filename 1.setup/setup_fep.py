@@ -31,14 +31,13 @@ def prepare_fep_files(complex_directory, destination_folder_fep):
     confout_fep_gro = os.path.join(complex_directory, "confout_fep.gro")
     shutil.copy(confout_gro, confout_fep_gro)
 
-    # Run gmx trjconv 
-    command = ["gmx", "trjconv", "-pbc", "mol", "-center", "-ur", "compact", "-f", confout_fep_gro, "-o", "tmp.pdb"] # Generate temporary pdb file from confout_fep.gro
-    with open(os.path.join(destination_folder_fep, "trjconv.log"), "w") as logfile: # Save trjconv output to logfile
+    command = ["gmx", "trjconv", "-pbc", "mol", "-center", "-ur", "compact", "-f", confout_fep_gro, "-o", "tmp.pdb"]
+    with open(os.path.join(destination_folder_fep, "trjconv.log"), "w") as logfile:
         subprocess.run(command, stdout=logfile, stderr=subprocess.STDOUT, text=True, input="1\n0\n", cwd=complex_directory)
 
     # Move temporary file to destination_folder_fep
     shutil.move(os.path.join(complex_directory, "tmp.pdb"), os.path.join(destination_folder_fep, "tmp.pdb"))
-    
+
 def remove_last_two_characters(original_file, modified_file):
     """Remove the last two characters of pdb files for avoid errors."""
     with open(original_file, 'r') as file_in, open(modified_file, 'w') as file_out:
@@ -46,8 +45,7 @@ def remove_last_two_characters(original_file, modified_file):
             if line.strip():
                 file_out.write(line[:-2] + '\n')
 
-def process_complex(input_pdb): # 30/04/24 Removed select water, resn SOL and (polymer around 10) and (lig around 25) and divided into two selections
-    """Process water molecules in the input PDB file. Generate a new PDB file with only water molecules around the polymer."""
+def process_complex(input_pdb, destination_folder_fep):
     pymol_script = f"""
 load {input_pdb}
 select lig, resn L01 
@@ -63,17 +61,13 @@ save {destination_folder_fep}/water.pdb, water
     # TO DO: Add ions selection if necessary (put an argument to the function and add to the pymol_script)
     with open("process.pml", "w") as file:
         file.write(pymol_script)
-    
+
     log_file_path = os.path.join(destination_folder_fep, "pymol.log")
-    
+
     with open(log_file_path, "w") as log_file:
         subprocess.run(["pymol", "-c", "process.pml"], stdout=log_file, stderr=subprocess.STDOUT, check=True)
     os.remove("process.pml")
     os.remove(input_pdb)
-
-
-# The following functions were taken and adapted from the script process_solvent.py, merge.py and fix_pdb_Q.sh 
-# in the MD_analysis repository (https://github.com/bananatana/MD_analysis/tree/main/GROMACS_to_Q)
 
 def read_pdb(filename):
     """Read the atoms from a PDB file and return a list of tuples with the atom type and coordinates."""
@@ -86,9 +80,7 @@ def read_pdb(filename):
                 y = float(line[38:46].strip())
                 z = float(line[46:54].strip())
                 if atom_type == 'OW': atom_type = 'O'
-                if atom_type == 'HW': atom_type = 'H'
-                if atom_type == 'HW1': atom_type = 'H'
-                if atom_type == 'HW2': atom_type = 'H'
+                if atom_type in ['HW', 'HW1', 'HW2']: atom_type = 'H'
                 atoms.append((atom_type, np.array([x, y, z])))
     return atoms
 
@@ -137,8 +129,7 @@ def merge_pdb_files(file1, file2, output):
         lines1 = f1.readlines()
         lines2 = f2.readlines()
 
-        # Write content of the first file
-        for line in lines1[:-1]:  # Exclude the last line (END) of the first file
+        for line in lines1[:-1]:
             out.write(line)
 
         # If there are no lines starting with "END" in the first file, add one
@@ -154,25 +145,26 @@ def merge_pdb_files(file1, file2, output):
             out.write('END\n')
 
 def correct_pdb(file_path):
+    """Correct resname and atom names for QligFEP compatibility."""
     substitutions = [
         ('POPC', 'POP '),
         ('1H   HOH', ' H1  HOH'),
         ('2H   HOH', ' H2  HOH'),
         ('OW  HOH', 'O   HOH'),
         ('CD  ILE', 'CD1 ILE'),
-        ('O1 ', 'O  '), # For C-terminus
-        ('O2 ', 'OXT'), # For C-terminus
+        ('O1 ', 'O  '),
+        ('O2 ', 'OXT'),
         ('HISH', 'HIP '),
         ('HISD', 'HID '),
         ('HISE', 'HIE ')
     ]
 
-    # Open the file for in-place editing
+
     with fileinput.input(files=[file_path], inplace=True, backup='.bak') as file:
         for line in file:
             for old, new in substitutions:
                 line = line.replace(old, new)
-            sys.stdout.write(line)  # Write directly to the file
+            sys.stdout.write(line)
 
 def clean_up(directory):
     """Remove unnecessary files."""
@@ -182,33 +174,66 @@ def clean_up(directory):
         if os.path.isfile(file_path):
             os.remove(file_path)
 
+def identify_disulfide_bonds(pdb_file):
+    """Identify CYS residues that should be CYX based on disulfide bonds."""
+    cys_pairs = []
+    with open(pdb_file, 'r') as file:
+        atoms = []
+        for line in file:
+            if line.startswith('ATOM') and 'CYS' in line[17:20]:
+                atom_name = line[12:16].strip()
+                if atom_name == 'SG':
+                    atoms.append((line[21:22].strip(), int(line[22:26].strip()), np.array([float(line[30:38]), float(line[38:46]), float(line[46:54])])))
+
+    for i, (chain1, resnum1, coord1) in enumerate(atoms):
+        for chain2, resnum2, coord2 in atoms[i+1:]:
+            distance = np.linalg.norm(coord1 - coord2)
+            if distance < 2.2:
+                cys_pairs.append((chain1, resnum1))
+                cys_pairs.append((chain2, resnum2))
+    return set(cys_pairs)
+
+def replace_cys_with_cyx(pdb_file, cys_pairs):
+    """Replace specific CYS residues with CYX based on identified pairs."""
+    with fileinput.input(files=[pdb_file], inplace=True, backup='.bak') as file:
+        for line in file:
+            if line.startswith('ATOM') and 'CYS' in line[17:20]:
+                chain = line[21:22].strip()
+                resnum = int(line[22:26].strip())
+                if (chain, resnum) in cys_pairs:
+                    line = line.replace('CYS', 'CYX')
+            sys.stdout.write(line)
+
 # Running
 args = parse_arguments()
 print(f"Preparing FEP files for {args.dir}.")
 destination_folder_fep = "fep_preparation_files"
 os.makedirs(destination_folder_fep, exist_ok=True)
-print(f"[1/11]  Directory created: {destination_folder_fep}.")
+print(f"[1/11] Directory created: {destination_folder_fep}.")
 prepare_fep_files(args.dir, destination_folder_fep)
-print(f"[2/11]  Necessary files from {args.dir} copied to {destination_folder_fep}.")
-print(f"[3/11]  PDB files generated.")
+print(f"[2/11] Necessary files from {args.dir} copied to {destination_folder_fep}.")
+print(f"[3/11] PDB files generated.")
 remove_last_two_characters(os.path.join(destination_folder_fep, "tmp.pdb"), os.path.join(destination_folder_fep, "tmp_clean.pdb"))
-print(f"[4/11]  Last two characters removed from PDB files.")
+print(f"[4/11] Last two characters removed from PDB files.")
 shutil.move(os.path.join(destination_folder_fep, "tmp_clean.pdb"), os.path.join(destination_folder_fep, "tmp.pdb"))
-process_complex(os.path.join(destination_folder_fep, "tmp.pdb"))
-print(f"[5/11]  Complex processed: complex (protein & membrane), waters and ligand saved.")
+process_complex(os.path.join(destination_folder_fep, "tmp.pdb"), destination_folder_fep)
+print(f"[5/11] Complex processed: complex (protein & membrane), waters and ligand saved.")
 atoms = read_pdb(os.path.join(destination_folder_fep, "water.pdb"))
-print(f"[6/11]  Water molecules read. Starting re-numbering. It may take long time.")
+print(f"[6/11] Water molecules read. Starting re-numbering. It may take long time.")
 water_molecules = compute_distances(atoms)
-print(f"[7/11]  Water molecules numbering re-calculated.")
+print(f"[7/11] Water molecules numbering re-calculated.")
 write_pdb(water_molecules, os.path.join(destination_folder_fep, 'water_fixed.pdb'))
-print(f"[8/11]  Water molecules written to water_fixed.pdb.")
+print(f"[8/11] Water molecules written to water_fixed.pdb.")
 merge_pdb_files(os.path.join(destination_folder_fep, 'complex.pdb'), os.path.join(destination_folder_fep, 'water_fixed.pdb'), os.path.join(destination_folder_fep, 'system.pdb'))
-print(f"[9/11]  Protein, membrane and fixed waters merged into system.pdb.")
+print(f"[9/11] Protein, membrane and fixed waters merged into system.pdb.")
+cys_pairs = identify_disulfide_bonds(os.path.join(destination_folder_fep, 'system.pdb'))
+replace_cys_with_cyx(os.path.join(destination_folder_fep, 'system.pdb'), cys_pairs)
+print(f"[10/11] Disulfide bonds identified and CYS residues replaced with CYX.")
 correct_pdb(os.path.join(destination_folder_fep, 'system.pdb'))
-print(f"[10/11] PDB file corrected.")
+print(f"[11/11] PDB file corrected.")
 
 if args.noclean:
-    print(f"[11/11] Temporary files, logs and scripts not removed. FEP files prepared in {destination_folder_fep}.")
+    print(f"[12/12] Temporary files, logs and scripts not removed. FEP files prepared in {destination_folder_fep}.")
 else:
     clean_up(destination_folder_fep)
-    print(f"[11/11] Temporary files, logs and scripts removed. FEP files prepared in {destination_folder_fep}.\nRelevant files: system.pdb and ligand.pdb.")
+    print(f"[12/12] Temporary files, logs and scripts removed. FEP files prepared in {destination_folder_fep}.\nRelevant files: system.pdb and ligand.pdb.")
