@@ -179,7 +179,7 @@ def modify_simulation_time(destination_folder):
             else:
                 prod_mdp_file.write(line)
 
-def modify_gen_seed(destination_folder):
+def modify_gen_seed(destination_folder): # Need testing
     """Modify the gen_seed in the prod.mdp file to ensure different random seeds for each replica."""
     import random
     gen_seed = random.randint(1, 2147483647)  # Random seed between 1 and 2147483647
@@ -190,13 +190,18 @@ def modify_gen_seed(destination_folder):
 
     with open(prod_mdp_path, "w") as prod_mdp_file:
         for line in lines:
-            if line.strip().startswith(";gen_seed"):
-                prod_mdp_file.write(f";gen_seed            =  {gen_seed}\n") # Test if ; is necessary or not
+            if line.strip().startswith(";gen_vel"):
+                prod_mdp_file.write("gen_vel             =  yes\n")
+            elif line.strip().startswith(";gen_temp"):
+                prod_mdp_file.write("gen_temp            =  310\n")
+            elif line.strip().startswith(";gen_seed") or line.strip().startswith("gen_seed"):
+                prod_mdp_file.write(f"gen_seed            =  {gen_seed}\n")
             else:
                 prod_mdp_file.write(line)
-        # # If gen_seed is not present, add it at the end
-        # if not any(line.strip().startswith(";gen_seed") for line in lines):
-        #     prod_mdp_file.write(f"gen_seed            =  {gen_seed}\n")
+        # Si gen_seed no está presente, añadirlo al final
+        if not any(line.strip().startswith("gen_seed") for line in lines):
+            prod_mdp_file.write(f"gen_seed            =  {gen_seed}\n")
+
 
 # RUN
 args = parse_arguments()
