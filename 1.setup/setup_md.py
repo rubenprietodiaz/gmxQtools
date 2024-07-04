@@ -194,9 +194,9 @@ def modify_gen_seed(destination_folder):
                 prod_mdp_file.write(f"gen_seed            =  {gen_seed}\n")
             else:
                 prod_mdp_file.write(line)
-        # If gen_seed is not present, add it at the end
-        if not any(line.strip().startswith(";gen_seed") for line in lines):
-            prod_mdp_file.write(f"gen_seed            =  {gen_seed}\n")
+        # # If gen_seed is not present, add it at the end
+        # if not any(line.strip().startswith(";gen_seed") for line in lines):
+        #     prod_mdp_file.write(f"gen_seed            =  {gen_seed}\n")
 
 # RUN
 args = parse_arguments()
