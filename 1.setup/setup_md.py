@@ -191,7 +191,7 @@ def modify_gen_seed(destination_folder):
     with open(prod_mdp_path, "w") as prod_mdp_file:
         for line in lines:
             if line.strip().startswith(";gen_seed"):
-                prod_mdp_file.write(f"gen_seed            =  {gen_seed}\n")
+                prod_mdp_file.write(f";gen_seed            =  {gen_seed}\n") # Test if ; is necessary or not
             else:
                 prod_mdp_file.write(line)
         # # If gen_seed is not present, add it at the end
