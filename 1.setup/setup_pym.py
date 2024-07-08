@@ -122,6 +122,9 @@ pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full
 #SBATCH -n 32
 #SBATCH -t 24:00:00
 #SBATCH --job-name=pymemdyn
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+#SBATCH --mail-user=ruben.prieto@usc.es
 pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full_relax false' if args.fep else ''}\n"""
 
         with open('pymemdyn.sh', 'w') as f_pymemdyn:

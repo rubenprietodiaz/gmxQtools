@@ -113,6 +113,9 @@ mv traj_prod_pymol.xtc finalOutput/traj_prod_pymol.xtc
 #SBATCH -N 1
 #SBATCH -c 32
 #SBATCH --gres=gpu:a100
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+#SBATCH --mail-user=ruben.prieto@usc.es
 
 module load gromacs
 
@@ -139,6 +142,9 @@ mv traj_prod_pymol.xtc finalOutput/traj_prod_pymol.xtc
 #SBATCH -c 16
 #SBATCH -A naiss2023-3-5
 #SBATCH --time=0-{args.runtime}:00:00
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+#SBATCH --mail-user=ruben.prieto@usc.es
 
 module load gromacs
 
