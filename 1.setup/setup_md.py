@@ -197,9 +197,7 @@ def modify_gen_seed(destination_folder): # Need testing
     with open(prod_mdp_path, "w") as prod_mdp_file:
         for line in lines:
             if line.strip().startswith(";gen_vel"):
-                prod_mdp_file.write("gen_vel             =  yes\n")
-            elif line.strip().startswith(";gen_temp"):
-                prod_mdp_file.write("gen_temp            =  310\n")
+                prod_mdp_file.write("gen_vel             =  no\n")
             elif line.strip().startswith(";gen_seed") or line.strip().startswith("gen_seed"):
                 prod_mdp_file.write(f"gen_seed            =  {gen_seed}\n")
             else:
