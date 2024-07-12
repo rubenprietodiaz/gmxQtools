@@ -57,6 +57,9 @@ def copy_files(folder, destination_folder):
         # Modify prod.mdp if simulation time is provided, if not, prod.mdp will be used as is (10 ns)
         if args.simulation_time:
             modify_simulation_time(destination_folder)
+        
+        # Modify gen_seed for each replica
+        modify_gen_seed(destination_folder)
     else:
         return False
 
@@ -175,10 +178,30 @@ def modify_simulation_time(destination_folder):
     with open(prod_mdp_path, "r") as prod_mdp_file:
         lines = prod_mdp_file.readlines()
 
-    with open(prod_mdp_path, "w") as prod_mdp_file:
+    with open(prod_mdp_path, "w") as prod_mdp_file: # Add a function to change gen_seed (if the runs start at exactly the same time, they will have the same seed)
         for line in lines:
             if line.strip().startswith("nsteps"):
                 prod_mdp_file.write(f"nsteps              =  {nsteps}   ; total {simulation_time_ns} ns\n")
+            else:
+                prod_mdp_file.write(line)
+
+def modify_gen_seed(destination_folder): # Need testing
+    """Modify the gen_seed in the prod.mdp file to ensure different random seeds for each replica."""
+    import random
+    gen_seed = random.randint(1, 2147483647)  # Random seed between 1 and 2147483647
+
+    prod_mdp_path = os.path.join(destination_folder, "prod.mdp")
+    with open(prod_mdp_path, "r") as prod_mdp_file:
+        lines = prod_mdp_file.readlines()
+
+    with open(prod_mdp_path, "w") as prod_mdp_file:
+        for line in lines:
+            if line.strip().startswith(";gen_vel"):
+                prod_mdp_file.write("gen_vel             =  yes\n")
+            elif line.strip().startswith(";gen_temp"):
+                prod_mdp_file.write("gen_temp            =  310\n")
+            elif line.strip().startswith(";gen_seed") or line.strip().startswith("gen_seed"):
+                prod_mdp_file.write(f"gen_seed            =  {gen_seed}\n")
             else:
                 prod_mdp_file.write(line)
 
