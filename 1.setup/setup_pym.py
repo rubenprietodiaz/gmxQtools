@@ -114,7 +114,7 @@ pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full
 #SBATCH --job-name=pymemdyn
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
-#SBATCH --mail-user=ruben.prieto@usc.es
+#SBATCH --mail-user=ruben.prieto+slurm@usc.es
 pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full_relax false' if args.fep else ''}\n"""
         elif args.cluster == "TETRA":
             pymemdyn_content = f"""#!/bin/bash -l
@@ -124,7 +124,7 @@ pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full
 #SBATCH --job-name=pymemdyn
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
-#SBATCH --mail-user=ruben.prieto@usc.es
+#SBATCH --mail-user=ruben.prieto+slurm@usc.es
 pymemdyn -p complex.pdb --res {args.res} -w {args.w} -i {args.i} -l LIG {'--full_relax false' if args.fep else ''}\n"""
 
         with open('pymemdyn.sh', 'w') as f_pymemdyn:
