@@ -5,10 +5,10 @@ import subprocess
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Setup your md simulation after pymemdyn equilibration.")
-    parser.add_argument("-t", "--simulation-time", type=int, help="Simulation time in nanoseconds (default by PyMemDyn: 10 ns).")
-    parser.add_argument("-rt", "--runtime", type=int, help="Runtime in hours (default: 24).", default=24)
+    parser.add_argument("-t", "--simulation-time", type=int, help="Simulation time in nanoseconds (default: 25 ns).", default=25)
+    parser.add_argument("-rt", "--runtime", type=int, help="Runtime in hours (default: 36).", default=36)
     parser.add_argument("-C", "--cluster", choices=["CSB", "CESGA", "TETRA"], default="TETRA", help="Choose the cluster (default: TETRA).")
-    parser.add_argument("-n", "--num-replicas", type=int, help="Number of replicas for the MD simulations (default: 1).", default=1)
+    parser.add_argument("-n", "--num-replicas", type=int, help="Number of replicas for the MD simulations (default: 3).", default=3)
     return parser.parse_args()
 
 def copy_files_in_directory(directory, destination_folder):
@@ -185,7 +185,7 @@ def modify_simulation_time(destination_folder):
             else:
                 prod_mdp_file.write(line)
 
-def modify_gen_seed(destination_folder): # Need testing
+def modify_gen_seed(destination_folder):
     """Modify the gen_seed in the prod.mdp file to ensure different random seeds for each replica."""
     import random
     gen_seed = random.randint(1, 2147483647)  # Random seed between 1 and 2147483647
