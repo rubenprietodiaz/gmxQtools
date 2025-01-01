@@ -66,9 +66,9 @@ for file in os.listdir('.'):
             # Execute pymodsim for alignment of complex.pdb and clean files
             print(f"[2/3] Running PyModSim for {dir_name}")
             os.system('pymodsim -n 3 -p complex.pdb > pymodsim.log 2>&1')
-            if os.path.exists('finalOutput/complex.pdb'):
+            if os.path.exists('finalOutput/homology.pdb'):
                 os.rename('complex.pdb', 'complex.pdb.bak') # Backup the original complex.pdb
-                shutil.copy('finalOutput/complex.pdb', 'complex.pdb')
+                shutil.copy('finalOutput/homology.pdb', 'complex.pdb')
                 
                 # Remove files from pymodsim
                 if not args.noclean:
