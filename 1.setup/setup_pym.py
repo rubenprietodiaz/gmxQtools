@@ -1,7 +1,7 @@
 import os
 import argparse
 import shutil
-
+#EXECUTE FIRST PYMODSIM, NOT WORKING AT ALL IF NOT ALIGNED
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Process ligand and protein for PyMemDyn execution.")
     parser.add_argument("--noclean", action='store_true', help="Do not clean the directory after processing.")
